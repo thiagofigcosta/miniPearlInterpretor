@@ -15,21 +15,21 @@ PushCommand::~PushCommand() {
     if (values_)
         delete values_;
 }
-
+//TODO fix me
 void PushCommand::execute() {
     if (list_&&values_) {
-        ListValue* l = list_->expr();
+        ListValue* l =(ListValue*)list_->expr();
         Value* value=values_->expr();
-        if(value->type()=Value::String){
+        if(value->type()==Value::String){
             StringValue* sv=(StringValue*)value;
             l->value().push_back(sv->value());
-        }else if(value->type()=Value:Integer){
+        }else if(value->type()==Value::Integer){
             IntegerValue* iv=(IntegerValue*)value;
             l->value().push_back(iv->value());
         }else{
-            SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
+            //SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
         }
     }else{
-        SyntacticalAnalysis::showError("Invalid operation on push cmd",line_);
+        //SyntacticalAnalysis::showError("Invalid operation on push cmd",line_);
     }
 }

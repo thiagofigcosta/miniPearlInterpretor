@@ -2,7 +2,7 @@
 #include "../value/HashValue.hpp"
 
 HashIndexExpr::HashIndexExpr(Expr* base, Expr* index, int line)
-	:base_(base),index_(index),line_(line){
+	:IndexExpr(base,index,line){
 }
 
 HashIndexExpr::~HashIndexExpr() {
@@ -11,14 +11,16 @@ HashIndexExpr::~HashIndexExpr() {
     if(index_)
     	delete index_;
 }
-
+//TODO fix me
 void HashIndexExpr::setValue(Value* value) {
-	if(value->type()!=Value::Integer||value->type()!=Value::String)
-		SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
-	if(base_->type()!=Value::Hash||index_->type()!=Value::String)
-		SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
-	HashValue* hv=base_->expr();
-	StringValue* sv=index_->expr();
+	if(value->type()!=Value::Integer||value->type()!=Value::String){
+		//SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
+	}
+	if(base_->type()!=Value::Hash||index_->type()!=Value::String){
+		//SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
+	}
+	HashValue* hv=(HashValue*)base_->expr();
+	StringValue* sv=(StringValue*)index_->expr();
 	if(value->type()!=Value::Integer){
 		StringValue* sattr=(StringValue*)value;
 		hv->value()[sv->value()]=sattr->value();
@@ -26,4 +28,8 @@ void HashIndexExpr::setValue(Value* value) {
 		IntegerValue* iattr=(IntegerValue*)value;
 		hv->value()[sv->value()]=iattr->value();
 	}
+}
+
+Value* HashIndexExpr::expr() {
+	return base_->expr();
 }

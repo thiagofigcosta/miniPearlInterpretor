@@ -143,7 +143,7 @@ void SyntacticalAnalysis::procAssign(){
 }
 
 //<action> ::= (print <rhs> | println [<rhs>] | push <rhs> ',' <rhs> | unshift <rhs> [ ',' <rhs> ]) [ <post> ] ';'
-Command* SyntaticAnalysis::procAction() {
+Command* SyntacticalAnalysis::procAction() {
     int line;
     ActionCommand* ac = 0;
 
@@ -516,7 +516,7 @@ Expr* SyntacticalAnalysis::procNumber(){
     std::string n=current.token;
     matchToken(TOKEN_NUMBER);
     IntegerValue* iv=new IntegerValue(atoi(n.c_str()), line);
-    Expr* e=new ConstExpr(iv, line);
+    Expr* e=new ConstExpr((Value*)iv, line);
     return e;
 }
 
@@ -526,6 +526,6 @@ Expr* SyntacticalAnalysis::procString(){
     std::string n=current.token;
     matchToken(TOKEN_STRING);
     StringValue* sv=new StringValue(n,line);
-    Expr* e=new ConstExpr(sv,line);
+    Expr* e=new ConstExpr((Value*)sv,line);
     return e;
 }

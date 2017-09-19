@@ -2,7 +2,6 @@
 #define INTEGER_VALUE_H
 
 #include "PrimitiveValue.hpp"
-#include "../value/IntegerValue.hpp"
 
 class IntegerValue : public PrimitiveValue<int> {
 public:

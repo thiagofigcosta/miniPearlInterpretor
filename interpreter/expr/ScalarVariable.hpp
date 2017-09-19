@@ -3,6 +3,7 @@
 
 #include "Variable.hpp"
 #include "../value/IntegerValue.hpp"
+#include "../value/StringValue.hpp"
 
 class ScalarVariable : public Variable {
 public:

@@ -3,11 +3,11 @@
 #include <cassert>
 
 IfCommand::IfCommand(BoolExpr* expr, Command* then, int line) 
-    : ConditionalCommand(line), expr_(expr), cmd_(then) {
+    : ConditionalCommand(expr,then,line){
 }
 
 IfCommand::IfCommand(BoolExpr* expr, Command* then, Command* elsecmd,int line) 
-    : ConditionalCommand(line), expr_(expr), cmd_(then), else_(elsecmd) {
+    : ConditionalCommand(expr,then,line), else_(elsecmd) {
 }
 
 IfCommand::~IfCommand() {

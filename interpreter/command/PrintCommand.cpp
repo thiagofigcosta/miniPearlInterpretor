@@ -21,19 +21,21 @@ PrintCommand::PrintCommand(Expr* expr, bool newLine, int line)
 PrintCommand::~PrintCommand() {
     delete expr_;
 }
-
+//TODO fix me
 void PrintCommand::execute() {
     if (expr_) {
         Value* value = expr_->expr();
+        StringValue* sv;
+        IntegerValue* iv;
         assert(value != 0);
 
         switch (value->type()) {
             case Value::Integer:
-                IntegerValue* iv = (IntegerValue*) value;
+                iv = (IntegerValue*) value;
                 std::cout << iv->value();
                 break;
             case Value::String:
-                StringValue* sv = (StringValue*) value;
+                sv = (StringValue*) value;
                 std::cout << sv->value();
                 break;
 /*
@@ -44,9 +46,7 @@ void PrintCommand::execute() {
                 // FIXME: Implement me!
                 break;
 */
-            default:
-                SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);
-               break;
+           // default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
         }
     }
 

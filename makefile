@@ -4,7 +4,7 @@ SCR=$(call rwildcard, ., *.cpp)
 all: make
 
 make:
-	g++ $(SCR) -std=c++11 -o miniPearlInterpretor
+	g++ $(SCR) -std=c++11 -w -o miniPearlInterpretor
 
 example:
 	./miniPearlInterpretor alunos.mp

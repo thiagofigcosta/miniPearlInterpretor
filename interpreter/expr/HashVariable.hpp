@@ -2,7 +2,7 @@
 #define HASH_VARIABLE_H
 
 #include "Variable.hpp"
-#include "../value/HashVariable.hpp"
+#include "../value/HashValue.hpp"
 
 class HashVariable : public Variable {
 public:

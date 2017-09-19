@@ -8,6 +8,7 @@ class PrimitiveValue : public Value {
 public:
     explicit PrimitiveValue(enum Value::Type type, int line) : Value(type, line) {}
     virtual ~PrimitiveValue() {}
+    static bool cmp(PrimitiveValue<T> const &a, PrimitiveValue<T> const &b);
 
     virtual T value() = 0;
 };

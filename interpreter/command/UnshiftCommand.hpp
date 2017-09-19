@@ -3,6 +3,8 @@
 
 #include "ActionCommand.hpp"
 #include "../value/ListValue.hpp"
+#include "../value/StringValue.hpp"
+#include "../value/IntegerValue.hpp"
 
 class Expr;
 

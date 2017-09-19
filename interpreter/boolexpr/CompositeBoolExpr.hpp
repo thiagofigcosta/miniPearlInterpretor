@@ -10,7 +10,7 @@ public:
         Or,
     };
 
-    explicit CompositeBoolExpr(BoolExpr left, CompositeBoolExpr::BoolOp op, BoolExpr right, int line);
+    explicit CompositeBoolExpr(BoolExpr* left, CompositeBoolExpr::BoolOp op, BoolExpr* right, int line);
     virtual ~CompositeBoolExpr();
 
     virtual bool expr();

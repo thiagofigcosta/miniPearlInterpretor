@@ -9,10 +9,11 @@ StringconcatExpr::~StringconcatExpr() {
 	delete left_;
 	delete right_;
 }
-
+//TODO fix me
 Value* StringconcatExpr::expr() {
-	if(left_->type()!=Expr::String||right_->type()!=Expr::String)
-		SyntacticalAnalysis::showError("Invalid type on string expr",line_);
+	if(left_->type()!=Expr::String||right_->type()!=Expr::String){
+		//SyntacticalAnalysis::showError("Invalid type on string expr",line_);
+	}
 	StringValue* lv=(StringValue*)left_->expr();
 	StringValue* rv=(StringValue*)right_->expr();
 	std::string l=lv->value();

@@ -13,13 +13,21 @@ UnshiftCommand::~UnshiftCommand() {
     delete list_;
     delete values_;
 }
-
+//TODO fix me
 void UnshiftCommand::execute() {
     if (list_&&values_) {
-        ListValue* l= list_->value();
-        Value* value=values_->value();
-        l->value().push_front(value->value());
+        ListValue* l=(ListValue*)list_->expr();
+        Value* value=values_->expr();
+        if(value->type()==Value::String){
+            StringValue* sv=(StringValue*) value;
+            l->value().insert(l->value().begin(),sv->value());
+        }else if(value->type()==Value::Integer){
+            IntegerValue* iv=(IntegerValue*) value;
+            l->value().insert(l->value().begin(),iv->value());
+        }else{
+            //SyntacticalAnalysis::showError("Invalid type on unshift cmd",line_);
+        }
     }else{
-        SyntacticalAnalysis::showError("Invalid operation on unshift cmd",line_);
+        //SyntacticalAnalysis::showError("Invalid operation on unshift cmd",line_);
     }
 }

@@ -1,17 +1,18 @@
 #include "ListValue.hpp"
 
 template<class T>
-ListValue<T>::ListValue(int line) :
+ListValue::ListValue(int line) :
     CompositeValue(Value::List, line){
+	typedef T VarType;
 }
 
-ListValue<T>::ListValue(std::list<PrimitiveValue<T>> l, int line) :
+ListValue::ListValue(std::vector<PrimitiveValue<T>> l, int line) :
     CompositeValue(Value::List, line), list_value(l){
 }
 
-ListValue<T>::~ListValue() {
+ListValue::~ListValue() {
 }
 
-std::List<PrimitiveValue<T>> ListValue::value() {
+std::vector<PrimitiveValue<T>> ListValue::value() {
     return list_value;
 }

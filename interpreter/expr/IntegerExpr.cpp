@@ -10,10 +10,11 @@ IntegerExpr::~IntegerExpr() {
 	delete left_;
 	delete right_;
 }
-
+//TODO fix me
 Value* IntegerExpr::expr() {
-	if(left_->type()!=Expr::Integer||right_->type()!=Expr::Integer)
-		SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
+	if(left_->type()!=Expr::Integer||right_->type()!=Expr::Integer){
+		//SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
+	}
 	IntegerValue* lv=(IntegerValue*)left_->expr();
 	IntegerValue* rv=(IntegerValue*)right_->expr();
 	int l=lv->value();
@@ -29,7 +30,7 @@ Value* IntegerExpr::expr() {
 			return new IntegerValue(l/r,line_);
 		case Mod:
 			return new IntegerValue(l%r,line_);
-		default: SyntacticalAnalysis::showError("Invalid operation on integer expr",line_);
+		//default: SyntacticalAnalysis::showError("Invalid operation on integer expr",line_);break;
 	}
     return nullptr;
 }

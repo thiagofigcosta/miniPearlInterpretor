@@ -2,7 +2,7 @@
 #define EXPR_H
     
 #include "../value/Value.hpp"
-class SyntacticalAnalysis;
+//class SyntacticalAnalysis;
 
 class Expr {
 public:

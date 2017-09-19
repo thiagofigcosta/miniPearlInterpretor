@@ -12,6 +12,8 @@ public:
 
     void setValue(Value* value);
 
+    Value* expr();
+
 private:
 
 };

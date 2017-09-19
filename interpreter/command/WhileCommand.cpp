@@ -3,7 +3,7 @@
 #include <cassert>
 
 WhileCommand::WhileCommand(BoolExpr* expr, Command* cmd, int line) 
-    : ConditionalCommand(line), expr_(expr), cmd_(cmd) {
+    : ConditionalCommand(expr,cmd,line){
 }
 
 WhileCommand::~WhileCommand() {
