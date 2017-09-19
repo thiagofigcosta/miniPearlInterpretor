@@ -18,7 +18,7 @@ public:
     explicit SingleBoolExpr(Expr* left, SingleBoolExpr::RelOp op, Expr* right, int line);
     virtual ~SingleBoolExpr();
 
-    virtual bool expr();
+    bool expr();
 
 private:
     Expr* left_;

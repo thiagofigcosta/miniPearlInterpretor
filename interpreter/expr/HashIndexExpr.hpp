@@ -10,9 +10,9 @@ public:
     explicit HashIndexExpr(Expr* base, Expr* index, int line);
     virtual ~HashIndexExpr();
 
-    void setValue(Value* value);
-
     Value* expr();
+
+    void setValue(Value* value);
 
 private:
 

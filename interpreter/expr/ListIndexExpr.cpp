@@ -31,5 +31,10 @@ void ListIndexExpr::setValue(Value* value) {
 }
 
 Value* ListIndexExpr::expr() {
-	return base_->expr();
+	if(base_->type()!=Value::List||index_->type()!=Value::Integer){
+		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+	}
+	ListValue* lv=(ListValue*)base_->expr();
+	IntegerValue* iv=(IntegerValue*)index_->expr();
+	return lv->value()[iv->value()];
 }

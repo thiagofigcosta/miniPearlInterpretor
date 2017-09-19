@@ -31,5 +31,10 @@ void HashIndexExpr::setValue(Value* value) {
 }
 
 Value* HashIndexExpr::expr() {
-	return base_->expr();
+	if(base_->type()!=Value::Hash||index_->type()!=Value::String){
+		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+	}
+	HashValue* hv=(HashValue*)base_->expr();
+	StringValue* sv=(StringValue*)index_->expr();
+	return hv->value()[sv->value()];
 }

@@ -5,12 +5,12 @@
 
 class SetExpr : public Expr {
 public:
-    explicit SetExpr(int line);
-    virtual ~SetExpr();
+    explicit SetExpr(int line):Expr(Expr::Set,line),value_(nullptr){}
+    virtual ~SetExpr(){}
 
-    virtual Value* expr();
+    virtual Value* expr()=0;
 
-	virtual void setValue(Value* value);
+	virtual void setValue(Value* value)=0;
 protected:
     Value* value_;
 

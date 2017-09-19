@@ -7,7 +7,7 @@
 class Variable : public SetExpr {
 public:
     explicit Variable(std::string name);
-    virtual ~Variable();
+    virtual ~Variable(){}
 
     Value* expr(){return value_;}
 

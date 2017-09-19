@@ -10,9 +10,9 @@ public:
     explicit ListIndexExpr(Expr* base, Expr* index, int line);
     virtual ~ListIndexExpr();
 
-    void setValue(Value* value);
-
     Value* expr();
+
+    void setValue(Value* value);
 
 private:
 

@@ -13,7 +13,7 @@ public:
     explicit CompositeBoolExpr(BoolExpr* left, CompositeBoolExpr::BoolOp op, BoolExpr* right, int line);
     virtual ~CompositeBoolExpr();
 
-    virtual bool expr();
+    bool expr();
 
 private:
     BoolExpr* left_;

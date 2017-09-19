@@ -10,7 +10,7 @@ public:
     virtual ~PostCondition();
 
     bool isRepeat();
-    virtual bool expr();
+    bool expr();
 
 private:
     BoolExpr* bool_expr;

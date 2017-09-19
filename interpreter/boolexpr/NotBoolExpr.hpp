@@ -8,7 +8,7 @@ public:
     explicit NotBoolExpr(BoolExpr* expr, int line);
     virtual ~NotBoolExpr();
 
-    virtual bool expr();
+    bool expr();
 
 private:
     BoolExpr* bool_expr;
