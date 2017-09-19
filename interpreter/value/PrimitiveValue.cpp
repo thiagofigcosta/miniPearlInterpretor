@@ -2,7 +2,7 @@
 #include "IntegerValue.hpp"
 #include "StringValue.hpp"
 
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 template<class T>
 bool PrimitiveValue<T>::cmp(PrimitiveValue<T> const &a, PrimitiveValue<T> const &b){
     	Value* A=(Value*)a;

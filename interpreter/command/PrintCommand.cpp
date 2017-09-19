@@ -21,7 +21,7 @@ PrintCommand::PrintCommand(Expr* expr, bool newLine, int line)
 PrintCommand::~PrintCommand() {
     delete expr_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void PrintCommand::execute() {
     if (expr_) {
         Value* value = expr_->expr();

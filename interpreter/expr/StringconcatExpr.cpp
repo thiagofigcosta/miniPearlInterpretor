@@ -9,7 +9,7 @@ StringconcatExpr::~StringconcatExpr() {
 	delete left_;
 	delete right_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 Value* StringconcatExpr::expr() {
 	if(left_->type()!=Expr::String||right_->type()!=Expr::String){
 		//SyntacticalAnalysis::showError("Invalid type on string expr",line_);

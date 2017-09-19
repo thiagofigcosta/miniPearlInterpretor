@@ -15,7 +15,7 @@ PushCommand::~PushCommand() {
     if (values_)
         delete values_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void PushCommand::execute() {
     if (list_&&values_) {
         ListValue* l =(ListValue*)list_->expr();

@@ -13,7 +13,7 @@ UnshiftCommand::~UnshiftCommand() {
     delete list_;
     delete values_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void UnshiftCommand::execute() {
     if (list_&&values_) {
         ListValue* l=(ListValue*)list_->expr();

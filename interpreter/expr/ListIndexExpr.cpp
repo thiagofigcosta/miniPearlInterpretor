@@ -11,7 +11,7 @@ ListIndexExpr::~ListIndexExpr() {
     if(index_)
     	delete index_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void ListIndexExpr::setValue(Value* value) {
 	if(value->type()!=Value::Integer||value->type()!=Value::String){
 		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);

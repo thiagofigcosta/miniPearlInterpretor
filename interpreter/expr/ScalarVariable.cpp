@@ -6,7 +6,7 @@ ScalarVariable::ScalarVariable(std::string name) : Variable(name) {
 ScalarVariable::~ScalarVariable() {
     delete value_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void ScalarVariable::setValue(Value* value) {
 	if(value->type()==Value::Integer){
 		value_=(IntegerValue*)value;

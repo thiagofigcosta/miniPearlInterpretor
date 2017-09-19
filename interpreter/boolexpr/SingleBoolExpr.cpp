@@ -8,7 +8,7 @@ SingleBoolExpr::~SingleBoolExpr() {
     delete left_;
     delete right_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 bool SingleBoolExpr::expr() {
 	switch(op_){
 		case Equal:return left_->expr()==right_->expr();

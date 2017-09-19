@@ -10,7 +10,7 @@ IntegerExpr::~IntegerExpr() {
 	delete left_;
 	delete right_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 Value* IntegerExpr::expr() {
 	if(left_->type()!=Expr::Integer||right_->type()!=Expr::Integer){
 		//SyntacticalAnalysis::showError("Invalid type on integer expr",line_);

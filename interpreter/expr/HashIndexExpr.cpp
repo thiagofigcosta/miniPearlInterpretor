@@ -11,7 +11,7 @@ HashIndexExpr::~HashIndexExpr() {
     if(index_)
     	delete index_;
 }
-//TODO fix me
+//TODO fix showError message from syntacticalanalysis
 void HashIndexExpr::setValue(Value* value) {
 	if(value->type()!=Value::Integer||value->type()!=Value::String){
 		//SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
