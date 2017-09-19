@@ -23,10 +23,10 @@ void HashIndexExpr::setValue(Value* value) {
 	StringValue* sv=(StringValue*)index_->expr();
 	if(value->type()!=Value::Integer){
 		StringValue* sattr=(StringValue*)value;
-		hv->value()[sv->value()]=sattr->value();
+		hv->value()[sv->value()]=sattr;
 	}else if(value->type()!=Value::String){
 		IntegerValue* iattr=(IntegerValue*)value;
-		hv->value()[sv->value()]=iattr->value();
+		hv->value()[sv->value()]=iattr;
 	}
 }
 

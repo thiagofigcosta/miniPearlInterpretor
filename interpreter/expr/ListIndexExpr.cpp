@@ -23,10 +23,10 @@ void ListIndexExpr::setValue(Value* value) {
 	IntegerValue* iv=(IntegerValue*)index_->expr();
 	if(value->type()!=Value::Integer){
 		StringValue* sattr=(StringValue*)value;
-		lv->value()[iv->value()]=sattr->value();
+		lv->value()[iv->value()]=sattr;
 	}else if(value->type()!=Value::String){
 		IntegerValue* iattr=(IntegerValue*)value;
-		lv->value()[iv->value()]=iattr->value();
+		lv->value()[iv->value()]=iattr;
 	}
 }
 

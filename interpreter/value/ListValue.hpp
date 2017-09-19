@@ -14,6 +14,7 @@ public:
 
     virtual std::vector<Value*> value();
 
+	static ListValue* clone(const ListValue* orig);
 private:
     std::vector<Value*> list_value;
 

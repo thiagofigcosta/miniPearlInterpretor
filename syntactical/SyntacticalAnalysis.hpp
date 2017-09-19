@@ -2,7 +2,13 @@
 #define SYNTACTICAL_ANALYSIS_H
 
 #include "../interpreter/expr/Expr.hpp"
+#include "../interpreter/boolexpr/BoolExpr.hpp"
+#include "../interpreter/boolexpr/PostCondition.hpp"
+#include "../interpreter/boolexpr/SingleBoolExpr.hpp"
 #include "../interpreter/command/Command.hpp"
+#include "../interpreter/command/IfCommand.hpp"
+#include "../interpreter/command/DoWhileCommand.hpp"
+#include "../interpreter/command/WhileCommand.hpp"
 #include "../lexical/TokenType.hpp"
 #include "../lexical/LexicalAnalysis.hpp"
 
@@ -31,10 +37,10 @@ private:
 	Command* procAction();
 
 	 // Command*
-	PostCondition* procIf();
-	PostCondition* procWhile();
-	PostCondition* procDo();
-	PostCondition* procForeach();
+	IfCommand* procIf();
+	DoWhileCommand* procWhile();
+	DoWhileCommand* procDo();
+	DoWhileCommand* procForeach();
 
 	// PostCondition*
 	PostCondition* procPost();
@@ -42,9 +48,9 @@ private:
 	PostCondition* procForeachHead();
 
 	// BoolExpr*
-	Expr* procBoolExpr();
-	Expr* procCmpExpr();
-	RelOp procBoolOp();
+	BoolExpr* procBoolExpr();
+	BoolExpr* procCmpExpr();
+	SingleBoolExpr::RelOp procBoolOp();
 
 	Expr* procRHS();
 	Expr* procSExpr();

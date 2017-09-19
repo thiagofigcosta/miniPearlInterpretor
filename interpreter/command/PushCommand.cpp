@@ -22,10 +22,10 @@ void PushCommand::execute() {
         Value* value=values_->expr();
         if(value->type()==Value::String){
             StringValue* sv=(StringValue*)value;
-            l->value().push_back(sv->value());
+            l->value().push_back(sv);
         }else if(value->type()==Value::Integer){
             IntegerValue* iv=(IntegerValue*)value;
-            l->value().push_back(iv->value());
+            l->value().push_back(iv);
         }else{
             //SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
         }

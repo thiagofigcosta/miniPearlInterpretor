@@ -14,3 +14,8 @@ ListValue::~ListValue() {
 std::vector<Value*> ListValue::value() {
     return list_value;
 }
+
+ListValue* ListValue::clone(const ListValue* orig){
+    ListValue* temp = new ListValue(orig->list_value,orig->line_);
+    return temp;
+}

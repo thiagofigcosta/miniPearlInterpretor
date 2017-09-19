@@ -19,7 +19,7 @@ Value* FunctionExpr::expr() {
 	ListValue* lv;
 	HashValue* hv;
 	std::string in;
-	PrimitiveValue<std::string>* pv;
+	Value* val;
 	Value* paramVal=param_->expr();
 	switch(type_){
 		case Input:
@@ -37,7 +37,7 @@ Value* FunctionExpr::expr() {
 				lv=(ListValue*)paramVal;
 				size=lv->value().size();
 			}else if(paramVal->type()==Value::Hash){
-				hv=paramVal;
+				hv=(HashValue*)paramVal;
 				size=hv->value().size();
 			}else {
 				//SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
@@ -46,8 +46,8 @@ Value* FunctionExpr::expr() {
 		case Sort:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				ListValue* sortedl=(ListValue*)lv->clone();
-				std::sort(sortedl->value().begin(),sortedl->value().end(),PrimitiveValue<lv->VarType>::cmp);
+				ListValue* sortedl=ListValue::clone(lv);
+				std::sort(sortedl->value().begin(),sortedl->value().end(),Value::cmp);
 				return sortedl;
 			}else{
 				//SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
@@ -56,7 +56,7 @@ Value* FunctionExpr::expr() {
 		case Reverse:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				ListValue* reversel=(ListValue*)lv->clone();
+				ListValue* reversel=ListValue::clone(lv);
 				std::reverse(reversel->value().begin(),reversel->value().end());
 				return reversel;
 			}else{
@@ -66,10 +66,10 @@ Value* FunctionExpr::expr() {
 		case Keys:
 			if(paramVal->type()==Value::Hash){
 				hv=(HashValue*)paramVal;
-				std::map<std::string,PrimitiveValue<hv->VarType>> mk=hv->value();
-				std::vector<std::string> lk;
-				for(std::map<std::string,PrimitiveValue<hv->VarType>>::iterator it = mk.begin(); it != mk.end(); ++it) {
-					lk.push_back(it->first);
+				std::map<std::string,Value*> mk=hv->value();
+				std::vector<Value*> lk;
+				for(std::map<std::string,Value*>::iterator it = mk.begin(); it != mk.end(); ++it) {
+					lk.push_back(new StringValue(it->first,line_));
 				}
 				return new ListValue(lk,line_);
 				}else{
@@ -79,9 +79,9 @@ Value* FunctionExpr::expr() {
 		case Values:
 			if(paramVal->type()==Value::Hash){
 				hv=(HashValue*)paramVal;
-				std::map<std::string,PrimitiveValue<hv->VarType>> mv=hv->value();
-				std::vector<PrimitiveValue<hv->VarType>> lp;
-				for(std::map<std::string,PrimitiveValue<hv->VarType>>::iterator it = mv.begin(); it != mv.end(); ++it) {
+				std::map<std::string,Value*> mv=hv->value();
+				std::vector<Value*> lp;
+				for(std::map<std::string,Value*>::iterator it = mv.begin(); it != mv.end(); ++it) {
 					lp.push_back(it->second);
 				}
 				return new ListValue(lp,line_);
@@ -104,9 +104,9 @@ Value* FunctionExpr::expr() {
 		case Pop:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				pv=lv->value().back();
+				val=lv->value().back();
 				lv->value().pop_back();
-				return pv;
+				return val;
 			}else{
 				//SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
@@ -114,9 +114,9 @@ Value* FunctionExpr::expr() {
 		case Shift:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				pv=lv->value().front();
-				lv->value().pop_front();
-				return pv;
+				val=lv->value()[0];
+				lv->value().erase(lv->value().begin());
+				return val;
 			}else{
 				//SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}

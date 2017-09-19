@@ -20,10 +20,10 @@ void UnshiftCommand::execute() {
         Value* value=values_->expr();
         if(value->type()==Value::String){
             StringValue* sv=(StringValue*) value;
-            l->value().insert(l->value().begin(),sv->value());
+            l->value().insert(l->value().begin(),sv);
         }else if(value->type()==Value::Integer){
             IntegerValue* iv=(IntegerValue*) value;
-            l->value().insert(l->value().begin(),iv->value());
+            l->value().insert(l->value().begin(),iv);
         }else{
             //SyntacticalAnalysis::showError("Invalid type on unshift cmd",line_);
         }
