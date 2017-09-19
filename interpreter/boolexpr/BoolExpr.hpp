@@ -11,7 +11,7 @@ public:
     };
 
     virtual ~BoolExpr();
-    bool expr();
+    virtual bool expr()=0;
     BoolExpr::Type type() const { return type_; }
     int line() const { return type_; }
 

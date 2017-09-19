@@ -9,9 +9,9 @@ public:
     explicit Variable(std::string name);
     virtual ~Variable();
 
-    virtual Value* expr();
+    Value* expr(){return value_;}
 
-    virtual void setValue(Value* value);
+    virtual void setValue(Value* value) = 0;
 
     std::string getName(){return name_;}
 protected:

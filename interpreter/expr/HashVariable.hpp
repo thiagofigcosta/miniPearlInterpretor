@@ -10,7 +10,6 @@ public:
     virtual ~HashVariable();
 
     void setValue(Value* value);
-
 private:
 
 };
