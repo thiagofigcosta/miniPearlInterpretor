@@ -6,7 +6,7 @@ HashValue::HashValue(int line) :
 	typedef T VarType;
 }
 
-HashValue::HashValue(std::map<std::string,PrimitiveValue<std::string>> m,int line) :
+HashValue::HashValue(std::map<std::string,PrimitiveValue<T>> m,int line) :
     CompositeValue(Value::Hash, line),hash_value(m){
 }
 
