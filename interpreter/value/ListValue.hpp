@@ -6,17 +6,16 @@
 #include "CompositeValue.hpp"
 #include "PrimitiveValue.hpp"
 
-template<class T>
-class ListValue : public CompositeValue<std::vector<PrimitiveValue<T>>> {
+class ListValue : public CompositeValue<std::vector<Value*> > {
 public:
     explicit ListValue(int line);
-    explicit ListValue(std::vector<PrimitiveValue<T>> l,int line);
+    explicit ListValue(std::vector<Value*> l,int line);
     virtual ~ListValue();
 
-    virtual std::vector<PrimitiveValue<T>> value();
+    virtual std::vector<Value*> value();
 
 private:
-    std::vector<PrimitiveValue<T>> list_value;
+    std::vector<Value*> list_value;
 
 };
 

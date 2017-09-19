@@ -27,19 +27,25 @@ private:
 	
 	Command* procStatements();
 	Command* procCmd();
-	void procAssign();
+	Command* procAssign();
 	Command* procAction();
-	void procIf();
-	void procWhile();
-	void procDo();
-	void procForeach();
-	void procPost();
-	void procIfHead();
-	void procForeachHead();
-	void procBoolExpr();
-	void procCmpExpr();
-	void procBoolOp();
-	void procLHS();
+
+	 // Command*
+	PostCondition* procIf();
+	PostCondition* procWhile();
+	PostCondition* procDo();
+	PostCondition* procForeach();
+
+	// PostCondition*
+	PostCondition* procPost();
+	PostCondition* procIfHead();
+	PostCondition* procForeachHead();
+
+	// BoolExpr*
+	Expr* procBoolExpr();
+	Expr* procCmpExpr();
+	RelOp procBoolOp();
+
 	Expr* procRHS();
 	Expr* procSExpr();
 	Expr* procExpr();

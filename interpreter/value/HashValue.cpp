@@ -1,18 +1,16 @@
 #include "HashValue.hpp"
 
-template<class T>
 HashValue::HashValue(int line) :
     CompositeValue(Value::Hash, line){
-	typedef T VarType;
 }
 
-HashValue::HashValue(std::map<std::string,PrimitiveValue<T>> m,int line) :
+HashValue::HashValue(std::map<std::string,Value*> m,int line) :
     CompositeValue(Value::Hash, line),hash_value(m){
 }
 
 HashValue::~HashValue() {
 }
 
-std::map<std::string,PrimitiveValue<T>> HashValue::value() {
+std::map<std::string,Value*> HashValue::value() {
     return hash_value;
 }

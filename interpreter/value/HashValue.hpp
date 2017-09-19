@@ -6,17 +6,16 @@
 #include "CompositeValue.hpp"
 #include "PrimitiveValue.hpp"
 
-template<class T>
-class HashValue : public CompositeValue<std::map<std::string,PrimitiveValue<T>>> {
+class HashValue : public CompositeValue<std::map<std::string,Value*> > {
 public:
     explicit HashValue(int line);
-    explicit HashValue(std::map<std::string,PrimitiveValue<T>> m,int line);
+    explicit HashValue(std::map<std::string,Value*> m,int line);
     virtual ~HashValue();
 
-    virtual std::map<std::string,PrimitiveValue<T>> value();
+    virtual std::map<std::string,Value*> value();
 
 private:
-    std::map<std::string,PrimitiveValue<T>> hash_value;
+    std::map<std::string,Value*> hash_value;
 
 };
 
