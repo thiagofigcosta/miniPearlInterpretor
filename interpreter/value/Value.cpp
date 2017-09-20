@@ -1,8 +1,8 @@
 #include "Value.hpp"
 #include "IntegerValue.hpp"
 #include "StringValue.hpp"
+#include "../../syntactical/SyntacticalAnalysis.hpp"
 
-//TODO fix showError message from syntacticalanalysis
 bool Value::cmp(Value *a, Value *b){
     if(a->type()==Value::String&&b->type()==Value::String){
         StringValue* As=(StringValue*)a;
@@ -13,7 +13,7 @@ bool Value::cmp(Value *a, Value *b){
         IntegerValue* Bi=(IntegerValue*)b;
         return Ai->value()<Bi->value();
     }else{
-        //EXCEPTION
+        SyntacticalAnalysis::showError("Invalid type on for comparison",-1);
     }
     return false;
 }

@@ -12,5 +12,5 @@ PostConditionalCommand::~PostConditionalCommand() {
 }
 
 void PostConditionalCommand::execute() {
-    //TODO QUE QUE FAZ AQUI?
+    //TODO QUE QUE FAZ AQUI? (if que vai depois do comando)
 }

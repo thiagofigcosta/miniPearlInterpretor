@@ -1,5 +1,6 @@
 #include "ListIndexExpr.hpp"
 #include "../value/ListValue.hpp"
+#include "../../syntactical/SyntacticalAnalysis.hpp"
 
 ListIndexExpr::ListIndexExpr(Expr* base, Expr* index, int line)
 	:IndexExpr(base,index,line){
@@ -11,13 +12,13 @@ ListIndexExpr::~ListIndexExpr() {
     if(index_)
     	delete index_;
 }
-//TODO fix showError message from syntacticalanalysis
+
 void ListIndexExpr::setValue(Value* value) {
 	if(value->type()!=Value::Integer||value->type()!=Value::String){
-		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
 	}
 	if(base_->type()!=Value::List||index_->type()!=Value::Integer){
-		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
 	}
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();
@@ -32,7 +33,7 @@ void ListIndexExpr::setValue(Value* value) {
 
 Value* ListIndexExpr::expr() {
 	if(base_->type()!=Value::List||index_->type()!=Value::Integer){
-		//SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
 	}
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();

@@ -1,8 +1,6 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-//class SyntacticalAnalysis;
-
 class Value {
 public:
     enum Type {

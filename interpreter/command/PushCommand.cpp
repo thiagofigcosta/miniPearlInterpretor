@@ -4,6 +4,7 @@
 #include "PushCommand.hpp"
 #include "../expr/Expr.hpp"
 #include "../value/IntegerValue.hpp"
+#include "../../syntactical/SyntacticalAnalysis.hpp"
 
 PushCommand::PushCommand(Expr* list,Expr* values, int line)
     : ActionCommand(line), list_(list), values_(values) {
@@ -15,7 +16,7 @@ PushCommand::~PushCommand() {
     if (values_)
         delete values_;
 }
-//TODO fix showError message from syntacticalanalysis
+
 void PushCommand::execute() {
     if (list_&&values_) {
         ListValue* l =(ListValue*)list_->expr();
@@ -27,9 +28,9 @@ void PushCommand::execute() {
             IntegerValue* iv=(IntegerValue*)value;
             l->value().push_back(iv);
         }else{
-            //SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
+            SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
         }
     }else{
-        //SyntacticalAnalysis::showError("Invalid operation on push cmd",line_);
+        SyntacticalAnalysis::showError("Invalid operation on push cmd",line_);
     }
 }

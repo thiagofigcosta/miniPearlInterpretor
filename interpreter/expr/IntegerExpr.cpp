@@ -1,5 +1,6 @@
 #include "IntegerExpr.hpp"
 #include "../value/IntegerValue.hpp"
+#include "../../syntactical/SyntacticalAnalysis.hpp"
 #include <iostream>
 
 IntegerExpr::IntegerExpr(Expr* left, IntegerOp op, Expr* right, int line) 
@@ -10,10 +11,10 @@ IntegerExpr::~IntegerExpr() {
 	delete left_;
 	delete right_;
 }
-//TODO fix showError message from syntacticalanalysis
+
 Value* IntegerExpr::expr() {
 	if(left_->type()!=Expr::Integer||right_->type()!=Expr::Integer){
-		//SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
+		SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
 	}
 	IntegerValue* lv=(IntegerValue*)left_->expr();
 	IntegerValue* rv=(IntegerValue*)right_->expr();
@@ -30,7 +31,7 @@ Value* IntegerExpr::expr() {
 			return new IntegerValue(l/r,line_);
 		case Mod:
 			return new IntegerValue(l%r,line_);
-		//default: SyntacticalAnalysis::showError("Invalid operation on integer expr",line_);break;
+		default: SyntacticalAnalysis::showError("Invalid operation on integer expr",line_);break;
 	}
     return nullptr;
 }

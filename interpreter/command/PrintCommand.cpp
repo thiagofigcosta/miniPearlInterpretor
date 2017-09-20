@@ -5,6 +5,7 @@
 #include "../expr/Expr.hpp"
 #include "../value/IntegerValue.hpp"
 #include "../value/StringValue.hpp"
+#include "../../syntactical/SyntacticalAnalysis.hpp"
 
 PrintCommand::PrintCommand(Expr* expr, int line)
     : ActionCommand(line), expr_(expr), newLine_(false) {
@@ -21,7 +22,7 @@ PrintCommand::PrintCommand(Expr* expr, bool newLine, int line)
 PrintCommand::~PrintCommand() {
     delete expr_;
 }
-//TODO fix showError message from syntacticalanalysis
+
 void PrintCommand::execute() {
     if (expr_) {
         Value* value = expr_->expr();
@@ -46,7 +47,7 @@ void PrintCommand::execute() {
                 // FIXME: Implement me!
                 break;
 */
-           // default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
+            default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
         }
     }
 
