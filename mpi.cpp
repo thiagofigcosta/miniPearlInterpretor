@@ -11,6 +11,7 @@ int main(int argc, char* argv[]) {
         LexicalAnalysis l(argv[1]);
         SyntacticalAnalysis s(l);
         s.start();
+        s.execute();
     } catch (std::string msg) {
         fprintf(stderr, "Internal error: %s\n", msg.c_str());
         return 2;

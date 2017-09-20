@@ -4,6 +4,8 @@
 #include "../interpreter/expr/Expr.hpp"
 #include "../interpreter/boolexpr/BoolExpr.hpp"
 #include "../interpreter/boolexpr/PostCondition.hpp"
+#include "../interpreter/boolexpr/ForeachHead.hpp"
+#include "../interpreter/boolexpr/IfHead.hpp"
 #include "../interpreter/boolexpr/SingleBoolExpr.hpp"
 #include "../interpreter/command/Command.hpp"
 #include "../interpreter/command/IfCommand.hpp"
@@ -21,9 +23,11 @@ public:
     static void showError(std::string err,int line);
     static void showError(std::string err,TokenType t,int line);
     void start();
+    void execute();
 private:
 	LexicalAnalysis &lex;
 	Lexeme current;
+	Command* program;
 
 	void matchToken(TokenType token);
 	bool testToken(TokenType token);
@@ -45,8 +49,8 @@ private:
 
 	// PostCondition*
 	PostCondition* procPost();
-	PostCondition* procIfHead();
-	PostCondition* procForeachHead();
+	IfHead* procIfHead();
+	ForeachHead* procForeachHead();
 
 	// BoolExpr*
 	BoolExpr* procBoolExpr();

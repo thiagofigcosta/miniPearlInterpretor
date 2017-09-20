@@ -2,9 +2,16 @@
 #include <string>
 #include "SyntacticalAnalysis.hpp"
 
+#include "../interpreter/boolexpr/IfHead.hpp"
+#include "../interpreter/boolexpr/ForeachHead.hpp"
 #include "../interpreter/command/ActionCommand.hpp"
 #include "../interpreter/command/CommandsBlock.hpp"
+#include "../interpreter/command/IfCommand.hpp"
+#include "../interpreter/command/ForeachCommand.hpp"
+#include "../interpreter/command/WhileCommand.hpp"
 #include "../interpreter/command/PrintCommand.hpp"
+#include "../interpreter/command/PushCommand.hpp"
+#include "../interpreter/command/UnshiftCommand.hpp"
 #include "../interpreter/value/IntegerValue.hpp"
 #include "../interpreter/value/StringValue.hpp"
 #include "../interpreter/expr/ConstExpr.hpp"
@@ -15,8 +22,11 @@ SyntacticalAnalysis::SyntacticalAnalysis(LexicalAnalysis& lex):lex(lex), current
 SyntacticalAnalysis::~SyntacticalAnalysis() {
 }
 void SyntacticalAnalysis::start(){
-	procStatements(); 
+    program=procStatements(); 
     matchToken(TOKEN_END_OF_FILE);
+}
+void SyntacticalAnalysis::execute(){
+    program->execute();
 }
 void SyntacticalAnalysis::matchToken(TokenType token){
     if (token == current.type) {
@@ -75,54 +85,57 @@ void SyntacticalAnalysis::showError(std::string err,int line) {
     exit(1);
 }
 
+
+
+
+
+
+
 // <statements> ::= <cmd> { <cmd> }
 Command* SyntacticalAnalysis::procStatements() {
-    CommandsBlock* cmds = new CommandsBlock();
-    cmds->addCommand(procCmd());
-
-    while (testToken(TOKEN_SVAR) || 
-           testToken(TOKEN_LVAR) || 
-           testToken(TOKEN_HVAR) || 
-           testToken(TOKEN_PRINT) || 
-           testToken(TOKEN_PRINTLN) || 
-           testToken(TOKEN_PUSH) || 
-           testToken(TOKEN_UNSHIFT) || 
-           testToken(TOKEN_IF) || 
-           testToken(TOKEN_WHILE) || 
-           testToken(TOKEN_DO) || 
-           testToken(TOKEN_FOREACH)) {
+    CommandsBlock* cmds=new CommandsBlock();
+    while (testToken(TOKEN_SVAR)|| 
+           testToken(TOKEN_LVAR)|| 
+           testToken(TOKEN_HVAR)|| 
+           testToken(TOKEN_PRINT)|| 
+           testToken(TOKEN_PRINTLN)|| 
+           testToken(TOKEN_PUSH)|| 
+           testToken(TOKEN_UNSHIFT)|| 
+           testToken(TOKEN_IF)|| 
+           testToken(TOKEN_WHILE)|| 
+           testToken(TOKEN_DO)|| 
+           testToken(TOKEN_FOREACH)){
         cmds->addCommand(procCmd());
     }
-
     return cmds;
 }
 
 // <cmd> ::= <assign> | <action> | <if> | <while> | <do-while> | <foreach>
 Command* SyntacticalAnalysis::procCmd() {
-    Command* c = 0;
+    Command* c=nullptr;
     switch (current.type) {
         case TOKEN_SVAR:
         case TOKEN_LVAR:
         case TOKEN_HVAR:
-            procAssign();
+            c=procAssign();
             break;
         case TOKEN_PRINT:
         case TOKEN_PRINTLN:
         case TOKEN_PUSH:
         case TOKEN_UNSHIFT:
-            procAction();
+            c=procAction();
             break;
         case TOKEN_IF:
-            procIf();
+            c=procIf();
             break;
         case TOKEN_WHILE:
-            procWhile();
+            c=procWhile();
             break;
         case TOKEN_DO:
-            procDo();
+            c=procDo();
             break;
         case TOKEN_FOREACH:
-            procForeach();
+            c=procForeach();
             break;
         default:
             showError("command");
@@ -131,8 +144,8 @@ Command* SyntacticalAnalysis::procCmd() {
     return c;
 }
 
-//<assign> ::= <lhs> '=' <rhs> [ <post> ] ';'
-Command* SyntacticalAnalysis::procAssign(){
+//<assign> ::= <lhs> '=' <rhs> [ <post> ] ';' 
+Command* SyntacticalAnalysis::procAssign(){//TODO fix me
     matchToken(TOKEN_ASSIGN);
     procRHS();
     //procPost();
@@ -142,150 +155,185 @@ Command* SyntacticalAnalysis::procAssign(){
 
 //<action> ::= (print <rhs> | println [<rhs>] | push <rhs> ',' <rhs> | unshift <rhs> [ ',' <rhs> ]) [ <post> ] ';'
 Command* SyntacticalAnalysis::procAction() {
-    int line;
-    ActionCommand* ac = 0;
-
+    int line=lex.line();
+    Command* ac=nullptr;
     if (testToken(TOKEN_PRINT)) {
-        // FIXME: print <rhs>
-    } else if (testToken(TOKEN_PRINTLN)) {
-        line = lex.line();
-
-        matchToken(TOKEN_PRINTLN);
-
-        Expr* expr = 0;
-        if (testToken(TOKEN_NUMBER) ||
-            testToken(TOKEN_STRING) ||
-            testToken(TOKEN_OPENTHEBRA) ||
-            testToken(TOKEN_OPENTHECUR) ||
-            testToken(TOKEN_SVAR) ||
-            testToken(TOKEN_LVAR) ||
-            testToken(TOKEN_HVAR) ||
-            testToken(TOKEN_INPUT) ||
-            testToken(TOKEN_SIZE) ||
-            testToken(TOKEN_SORT) ||
-            testToken(TOKEN_REVERSE) ||
-            testToken(TOKEN_KEYS) ||
-            testToken(TOKEN_VALUES) ||
-            testToken(TOKEN_EMPTY) ||
-            testToken(TOKEN_POP) ||
-            testToken(TOKEN_SHIFT) ||
-            testToken(TOKEN_OPENTHEPAR)) {
+        matchToken(TOKEN_PRINT);
+        Expr* expr=nullptr;
+        if (testToken(TOKEN_NUMBER)||
+            testToken(TOKEN_STRING)||
+            testToken(TOKEN_OPENTHEBRA)||
+            testToken(TOKEN_OPENTHECUR)||
+            testToken(TOKEN_SVAR)||
+            testToken(TOKEN_LVAR)||
+            testToken(TOKEN_HVAR)||
+            testToken(TOKEN_INPUT)||
+            testToken(TOKEN_SIZE)||
+            testToken(TOKEN_SORT)||
+            testToken(TOKEN_REVERSE)||
+            testToken(TOKEN_KEYS)||
+            testToken(TOKEN_VALUES)||
+            testToken(TOKEN_EMPTY)||
+            testToken(TOKEN_POP)||
+            testToken(TOKEN_SHIFT)||
+            testToken(TOKEN_OPENTHEPAR)){
             expr = procRHS();
         }
-
-        ac = new PrintCommand(expr, true, line);
+        ac=new PrintCommand(expr, false, line);
+    } else if (testToken(TOKEN_PRINTLN)) {
+        matchToken(TOKEN_PRINTLN);
+        Expr* expr=nullptr;
+        if (testToken(TOKEN_NUMBER)||
+            testToken(TOKEN_STRING)||
+            testToken(TOKEN_OPENTHEBRA)||
+            testToken(TOKEN_OPENTHECUR)||
+            testToken(TOKEN_SVAR)||
+            testToken(TOKEN_LVAR)||
+            testToken(TOKEN_HVAR)||
+            testToken(TOKEN_INPUT)||
+            testToken(TOKEN_SIZE)||
+            testToken(TOKEN_SORT)||
+            testToken(TOKEN_REVERSE)||
+            testToken(TOKEN_KEYS)||
+            testToken(TOKEN_VALUES)||
+            testToken(TOKEN_EMPTY)||
+            testToken(TOKEN_POP)||
+            testToken(TOKEN_SHIFT)||
+            testToken(TOKEN_OPENTHEPAR)){
+            expr = procRHS();
+        }
+        ac=new PrintCommand(expr, true, line);
     } else if (testToken(TOKEN_PUSH)) {
-        // FIXME: push <rhs> ',' <rhs>
+        matchToken(TOKEN_PUSH);
+        Expr* expr0=procRHS();
+        matchToken(TOKEN_COMMA);
+        Expr* expr1=procRHS();
+        ac=new PushCommand(expr0,expr1,line);
     } else if (testToken(TOKEN_UNSHIFT)) {
-        // FIXME: unshift <rhs> [ ',' <rhs> ])
+        matchToken(TOKEN_UNSHIFT);
+        Expr* expr0=procRHS();
+        matchToken(TOKEN_COMMA);
+        Expr* expr1=procRHS();
+        ac=new UnshiftCommand(expr0,expr1,line);
     } else {
         showError();
     }
-
-    // FIXME: [ <post> ]
-
+    if(testToken(TOKEN_IF)){
+        IfHead* post=procIfHead();
+        ac=new IfCommand(post,ac,line);
+    }
     matchToken(TOKEN_DOT_COMMA);
-
     return ac;
 }
 
 //<if> ::= <if-head> '{' <statements> '}' [ else '{' <statements> '}' ]
 IfCommand* SyntacticalAnalysis::procIf(){
-    procIfHead();
+    int line=lex.line();
+    IfHead* cond=procIfHead();
+    Command* then=nullptr;
+    Command* elsi=nullptr; 
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
-        procStatements();
+        then=procStatements();
         matchToken(TOKEN_CLOSETHECUR);
     }else{
-        procStatements();
+        then=procCmd();
     }
     if(testToken(TOKEN_ELSE)){
         matchToken(TOKEN_ELSE);
         if(testToken(TOKEN_OPENTHECUR)){
             matchToken(TOKEN_OPENTHECUR);
-            procStatements();
+            elsi=procStatements();
             matchToken(TOKEN_CLOSETHECUR);
         }else{
-            procStatements();
+            elsi=procCmd();
         }
     }
-    return nullptr;
+    if(elsi==nullptr)
+        return new IfCommand(cond,then,line);
+    else 
+        return new IfCommand(cond,then,elsi,line);
 }
 
 //<while> ::= while '(' <boolexpr> ')' '{' <statements> '}'
 WhileCommand* SyntacticalAnalysis::procWhile(){
+    Command* cmd=nullptr;
     matchToken(TOKEN_WHILE);
     matchToken(TOKEN_OPENTHEPAR);
-    procBoolExpr();
+    BoolExpr* boolxp=procBoolExpr();
     matchToken(TOKEN_CLOSETHEPAR);
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
-        procStatements();
+        cmd=procStatements();
         matchToken(TOKEN_CLOSETHECUR);
     }else{
-        procStatements();
+        cmd=procCmd();
     }
-    return nullptr;
+    return new WhileCommand(boolxp,cmd,lex.line());
 }
 
 //<do-while> ::= do '{' <statements> '}' while '(' <boolexpr> ')' ';'
 DoWhileCommand* SyntacticalAnalysis::procDo(){
+    Command* cmd=nullptr;
     matchToken(TOKEN_DO);
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
-        procStatements();
+        cmd=procStatements();
         matchToken(TOKEN_CLOSETHECUR);
     }else{
-        procStatements();
+        cmd=procCmd();
     }
     matchToken(TOKEN_WHILE);
     matchToken(TOKEN_OPENTHEPAR);
-    procBoolExpr();
+    BoolExpr* boolxp=procBoolExpr();
     matchToken(TOKEN_CLOSETHEPAR);
     matchToken(TOKEN_DOT_COMMA);
-    return nullptr;
+    return new DoWhileCommand(boolxp,cmd,lex.line());
 }
 
 //<foreach> ::= <foreach-head> '{' <statements> '}'
 ForeachCommand* SyntacticalAnalysis::procForeach(){
-    procForeachHead();
+    Command* cmd=nullptr;
+    ForeachHead* fh=procForeachHead();
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
-        procStatements();
+        cmd=procStatements();
         matchToken(TOKEN_CLOSETHECUR);
     }else{
-        procStatements();
+        cmd=procCmd();
     }
-    return nullptr;
+    return new ForeachCommand(fh,cmd,lex.line());
 }
 
 //<post> ::= <if-head> | <foreach-head>
 PostCondition* SyntacticalAnalysis::procPost(){
+    PostCondition* pc=nullptr;
     switch (current.type) {
         case TOKEN_IF:
-            procIfHead();
+            pc=procIfHead();
             break;
         case TOKEN_FOREACH:
-            procForeachHead();
+            pc=procForeachHead();
             break;
         default:
             showError("(if|foreach) head");
             break;
     }
-    return nullptr;
+    return pc;
 }
 
 //<if-head> ::= if '(' <boolexpr> ')'
-PostCondition* SyntacticalAnalysis::procIfHead(){
+IfHead* SyntacticalAnalysis::procIfHead(){
+    BoolExpr* expr=nullptr;
     matchToken(TOKEN_IF);
     matchToken(TOKEN_OPENTHEPAR);
-    procBoolExpr();
+    expr=procBoolExpr();
     matchToken(TOKEN_CLOSETHEPAR);
-    return nullptr;
+    return new IfHead(expr,lex.line());
 }
 
 //<foreach-head> ::= foreach <scalar-var> '(' <rhs> ')'
-PostCondition* SyntacticalAnalysis::procForeachHead(){
+ForeachHead* SyntacticalAnalysis::procForeachHead(){//TODO fix me
     matchToken(TOKEN_FOREACH);
     matchToken(TOKEN_SVAR);
     matchToken(TOKEN_OPENTHEPAR);
@@ -295,7 +343,7 @@ PostCondition* SyntacticalAnalysis::procForeachHead(){
 }
 
 //<boolexpr> ::= [not] <cmpexpr> [ (and | or) <boolexpr> ]
-BoolExpr* SyntacticalAnalysis::procBoolExpr(){
+BoolExpr* SyntacticalAnalysis::procBoolExpr(){//TODO fix me
     if(testToken(TOKEN_NOT))
         matchToken(TOKEN_NOT);
     procCmpExpr();
@@ -307,7 +355,7 @@ BoolExpr* SyntacticalAnalysis::procBoolExpr(){
 }
 
 //<cmpexpr> ::= <sexpr> <relop> <sexpr>
-BoolExpr* SyntacticalAnalysis::procCmpExpr(){
+BoolExpr* SyntacticalAnalysis::procCmpExpr(){//TODO fix me
     procSExpr();
     procBoolOp();
     procSExpr();
@@ -315,7 +363,7 @@ BoolExpr* SyntacticalAnalysis::procCmpExpr(){
 }
 
 //<relop> ::= '==' | '!=' | '<' | '>' | '<=' | '>='
-SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){
+SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){//TODO fix me
     switch (current.type) {
         case TOKEN_EQUAL:
         case TOKEN_DIFF:
@@ -333,7 +381,7 @@ SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){
 }
 
 //<rhs> ::= <sexpr> [ '[' <rhs> ']' | '{' <rhs> '}' ]
-Expr*  SyntacticalAnalysis::procRHS(){
+Expr*  SyntacticalAnalysis::procRHS(){//TODO fix me
     Expr* e = procSExpr();
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
@@ -348,7 +396,7 @@ Expr*  SyntacticalAnalysis::procRHS(){
 }
 
 //<sexpr> ::= <expr> { '.' <expr> }
-Expr* SyntacticalAnalysis::procSExpr(){
+Expr* SyntacticalAnalysis::procSExpr(){//TODO fix me
     Expr* e=nullptr;
     do{
         e=procExpr();
@@ -360,7 +408,7 @@ Expr* SyntacticalAnalysis::procSExpr(){
 }
 
 //<expr> ::= <term> { ('+' | '-') <term> }
-Expr* SyntacticalAnalysis::procExpr(){
+Expr* SyntacticalAnalysis::procExpr(){//TODO fix me
     Expr* e=nullptr;
     do{
         e=procTerm();
@@ -372,7 +420,7 @@ Expr* SyntacticalAnalysis::procExpr(){
 }
 
 //<term> ::= <factor> { ('*' | '/' | '%') <factor> }
-Expr* SyntacticalAnalysis::procTerm(){
+Expr* SyntacticalAnalysis::procTerm(){//TODO fix me
     Expr* e=nullptr;
     do{
         e=procFactor();
@@ -384,7 +432,7 @@ Expr* SyntacticalAnalysis::procTerm(){
 }
 
 //<factor> ::= <number> | <string> | <function> | <var> | <list> | <hash> | '(' <sexpr> ')'
-Expr* SyntacticalAnalysis::procFactor(){
+Expr* SyntacticalAnalysis::procFactor(){//TODO fix me
     Expr* e = 0;
     switch (current.type) {
         case TOKEN_NUMBER:
@@ -424,7 +472,7 @@ Expr* SyntacticalAnalysis::procFactor(){
 }
 
 //<function> ::= (input | size | sort | reverse | keys | values | empty) <rhs>
-Expr* SyntacticalAnalysis::procFunction(){
+Expr* SyntacticalAnalysis::procFunction(){//TODO fix me
     Expr* e = 0;
     switch (current.type) {
         case TOKEN_INPUT:
@@ -445,7 +493,7 @@ Expr* SyntacticalAnalysis::procFunction(){
 }
 
 //<var> ::= <scalar-var> | <list-var> | <hash-var>
-Expr* SyntacticalAnalysis::procVar(){
+Expr* SyntacticalAnalysis::procVar(){//TODO fix me
     Expr* e = 0;
     switch (current.type) {
         case TOKEN_SVAR:
@@ -461,7 +509,7 @@ Expr* SyntacticalAnalysis::procVar(){
 }
 
 //<list> ::= '[' [ <rhs> { ',' <rhs> } ] ']'
-Expr* SyntacticalAnalysis::procList(){
+Expr* SyntacticalAnalysis::procList(){//TODO fix me
     Expr* e = 0;
     matchToken(TOKEN_OPENTHEBRA);
     do{
@@ -475,7 +523,7 @@ Expr* SyntacticalAnalysis::procList(){
 }
 
 //<hash> ::= '{' [ <rhs> '=>' <rhs> { ',' <rhs> '=>' <rhs> } ] '}'
-Expr* SyntacticalAnalysis::procHash(){
+Expr* SyntacticalAnalysis::procHash(){//TODO fix me
     Expr* e = 0;
     matchToken(TOKEN_OPENTHECUR);
     do{
