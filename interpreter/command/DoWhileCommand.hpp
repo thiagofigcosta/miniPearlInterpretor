@@ -1,9 +1,10 @@
-#ifndef WHILECOMMAND_H
-#define WHILECOMMAND_H
+#ifndef DOWHILECOMMAND_H
+#define DOWHILECOMMAND_H
 
-#include "ConditionalCommand.hpp"
+#include "Command.hpp"
+#include "../boolexpr/BoolExpr.hpp"
 
-class DoWhileCommand : public ConditionalCommand {
+class DoWhileCommand : public Command {
 public:
     explicit DoWhileCommand(BoolExpr* expr, Command* cmd, int line);
     virtual ~DoWhileCommand();
@@ -11,7 +12,8 @@ public:
     void execute();
 
 private:
-
+	BoolExpr* expr_;
+	Command* cmd_;
 };
 
 #endif

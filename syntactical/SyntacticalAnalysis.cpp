@@ -213,7 +213,7 @@ IfCommand* SyntacticalAnalysis::procIf(){
 }
 
 //<while> ::= while '(' <boolexpr> ')' '{' <statements> '}'
-DoWhileCommand* SyntacticalAnalysis::procWhile(){
+WhileCommand* SyntacticalAnalysis::procWhile(){
     matchToken(TOKEN_WHILE);
     matchToken(TOKEN_OPENTHEPAR);
     procBoolExpr();
@@ -247,7 +247,7 @@ DoWhileCommand* SyntacticalAnalysis::procDo(){
 }
 
 //<foreach> ::= <foreach-head> '{' <statements> '}'
-DoWhileCommand* SyntacticalAnalysis::procForeach(){
+ForeachCommand* SyntacticalAnalysis::procForeach(){
     procForeachHead();
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);

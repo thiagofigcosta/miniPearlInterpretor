@@ -1,17 +1,20 @@
 #ifndef IFCOMMAND_H
 #define IFCOMMAND_H
 
-#include "ConditionalCommand.hpp"
+#include "Command.hpp"
+#include "../boolexpr/IfHead.hpp"
 
-class IfCommand : public ConditionalCommand {
+class IfCommand : public Command {
 public:
-    explicit IfCommand(BoolExpr* expr, Command* then, int line);
-    explicit IfCommand(BoolExpr* expr, Command* then, Command* elsecmd, int line);
+    explicit IfCommand(IfHead* cond, Command* then, int line);
+    explicit IfCommand(IfHead* cond, Command* then, Command* elsecmd, int line);
     virtual ~IfCommand();
 
     void execute();
 
 private:
+	IfHead* cond_;
+	Command* then_;
     Command* else_;
 
 };

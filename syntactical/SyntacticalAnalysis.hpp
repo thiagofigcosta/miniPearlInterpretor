@@ -8,6 +8,7 @@
 #include "../interpreter/command/Command.hpp"
 #include "../interpreter/command/IfCommand.hpp"
 #include "../interpreter/command/DoWhileCommand.hpp"
+#include "../interpreter/command/ForeachCommand.hpp"
 #include "../interpreter/command/WhileCommand.hpp"
 #include "../lexical/TokenType.hpp"
 #include "../lexical/LexicalAnalysis.hpp"
@@ -38,9 +39,9 @@ private:
 
 	 // Command*
 	IfCommand* procIf();
-	DoWhileCommand* procWhile();
+	WhileCommand* procWhile();
 	DoWhileCommand* procDo();
-	DoWhileCommand* procForeach();
+	ForeachCommand* procForeach();
 
 	// PostCondition*
 	PostCondition* procPost();

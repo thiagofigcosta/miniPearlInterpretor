@@ -5,16 +5,13 @@
 
 class PostCondition : public BoolExpr {
 public:
-    explicit PostCondition(BoolExpr* expr, int line);
-    explicit PostCondition(BoolExpr* expr, bool repeat,int line);
-    virtual ~PostCondition();
+    explicit PostCondition(int line):BoolExpr(BoolExpr::PostCondition,line){}
+    virtual ~PostCondition(){}
 
-    bool isRepeat();
-    bool expr();
-
+    virtual void reset()=0;
+    virtual bool expr()=0;
 private:
-    BoolExpr* bool_expr;
-    bool repeat_;
+
 };
 
 #endif

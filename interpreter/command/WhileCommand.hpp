@@ -1,9 +1,10 @@
 #ifndef WHILECOMMAND_H
 #define WHILECOMMAND_H
 
-#include "ConditionalCommand.hpp"
+#include "Command.hpp"
+#include "../boolexpr/BoolExpr.hpp"
 
-class WhileCommand : public ConditionalCommand {
+class WhileCommand : public Command {
 public:
     explicit WhileCommand(BoolExpr* expr, Command* cmd, int line);
     virtual ~WhileCommand();
@@ -11,7 +12,8 @@ public:
     void execute();
 
 private:
-
+	BoolExpr* expr_;
+	Command* cmd_;
 };
 
 #endif

@@ -3,7 +3,7 @@
 #include <cassert>
 
 DoWhileCommand::DoWhileCommand(BoolExpr* expr, Command* cmd, int line) 
-    : ConditionalCommand(expr,cmd,line){
+    : Command(line),expr_(expr),cmd_(cmd){
 }
 
 DoWhileCommand::~DoWhileCommand() {

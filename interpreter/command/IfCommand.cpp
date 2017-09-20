@@ -2,23 +2,23 @@
 
 #include <cassert>
 
-IfCommand::IfCommand(BoolExpr* expr, Command* then, int line) 
-    : ConditionalCommand(expr,then,line){
+IfCommand::IfCommand(IfHead* cond, Command* then, int line) 
+    : Command(line),cond_(cond),then_(then){
 }
 
-IfCommand::IfCommand(BoolExpr* expr, Command* then, Command* elsecmd,int line) 
-    : ConditionalCommand(expr,then,line), else_(elsecmd) {
+IfCommand::IfCommand(IfHead* cond, Command* then, Command* elsecmd,int line) 
+    : Command(line),cond_(cond),then_(then),else_(elsecmd) {
 }
 
 IfCommand::~IfCommand() {
-    delete expr_;
-    delete cmd_;
+    delete cond_;
+    delete then_;
     delete else_;
 }
 
 void IfCommand::execute() {
-    if(expr_->expr()){
-    	cmd_->execute();
+    if(cond_->expr()){
+    	then_->execute();
     }else if(else_){
     	else_->execute();
     }
