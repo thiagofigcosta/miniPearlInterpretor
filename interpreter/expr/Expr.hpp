@@ -4,7 +4,7 @@
 #include "../value/Value.hpp"
 //class SyntacticalAnalysis;
 
-class Expr {
+class Expr{
 public:
     enum Type {
         Const,

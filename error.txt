@@ -1,33 +1,6 @@
-In function `IndexExpr::IndexExpr(Expr*, Expr*, int)':
+/tmp/ccH9YQ75.o: In function `IndexExpr::IndexExpr(Expr*, Expr*, int)':
 HashIndexExpr.cpp:(.text._ZN9IndexExprC2EP4ExprS1_i[_ZN9IndexExprC5EP4ExprS1_i]+0x2b): undefined reference to `vtable for IndexExpr'
-
-
-In function `IndexExpr::~IndexExpr()':
+/tmp/ccH9YQ75.o: In function `IndexExpr::~IndexExpr()':
 HashIndexExpr.cpp:(.text._ZN9IndexExprD2Ev[_ZN9IndexExprD5Ev]+0xf): undefined reference to `vtable for IndexExpr'
-/tmp/cc6ycj1X.o:(.data.rel.ro._ZTI13HashIndexExpr[_ZTI13HashIndexExpr]+0x10): undefined reference to `typeinfo for IndexExpr'
-
-
-
-
-
-
-
-
-
-
-
-In function `HashVariable::HashVariable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
-HashVariable.cpp:(.text+0x33): undefined reference to `Variable::Variable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'
-/tmp/cctlzEi0.o:(.data.rel.ro._ZTI13ListIndexExpr[_ZTI13ListIndexExpr]+0x10): undefined reference to `typeinfo for IndexExpr'
-
-
-
-
-In function `ScalarVariable::ScalarVariable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
-ScalarVariable.cpp:(.text+0x33): undefined reference to `Variable::Variable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'
-
-
-
-
-In function `ListVariable::ListVariable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
-ListVariable.cpp:(.text+0x33): undefined reference to `Variable::Variable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'
+/tmp/ccH9YQ75.o:(.data.rel.ro._ZTI13HashIndexExpr[_ZTI13HashIndexExpr]+0x10): undefined reference to `typeinfo for IndexExpr'
+/tmp/cckBxevj.o:(.data.rel.ro._ZTI13ListIndexExpr[_ZTI13ListIndexExpr]+0x10): undefined reference to `typeinfo for IndexExpr'
