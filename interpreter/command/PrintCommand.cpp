@@ -5,6 +5,8 @@
 #include "../expr/Expr.hpp"
 #include "../value/IntegerValue.hpp"
 #include "../value/StringValue.hpp"
+#include "../value/HashValue.hpp"
+#include "../value/ListValue.hpp"
 #include "../../syntactical/SyntacticalAnalysis.hpp"
 
 PrintCommand::PrintCommand(Expr* expr, int line)
@@ -25,28 +27,52 @@ PrintCommand::~PrintCommand() {
 
 void PrintCommand::execute() {
     if (expr_) {
-        Value* value = expr_->expr();
+        std::string out="";
+        Value* value=expr_->expr();
         StringValue* sv;
         IntegerValue* iv;
-        assert(value != 0);
-
+        HashValue* hv;
+        ListValue* lv;
+        assert(value!=nullptr);
         switch (value->type()) {
             case Value::Integer:
-                iv = (IntegerValue*) value;
-                std::cout << iv->value();
+                iv=(IntegerValue*)value;
+                std::cout<<iv->value();
                 break;
             case Value::String:
-                sv = (StringValue*) value;
-                std::cout << sv->value();
+                sv=(StringValue*)value;
+                std::cout<<sv->value();
                 break;
-/*
             case Value::List:
-                // FIXME: Implement me!
+                lv=(ListValue*)value;
+                for(Value* v:lv->value()){
+                    if(v->type()==Value::Integer){
+                        iv=(IntegerValue*)v;
+                        out+=std::to_string(iv->value())+",";
+                    }else{
+                        sv=(StringValue*)v;
+                        out+=sv->value()+",";
+                    }
+                }
+                out.pop_back();
+                std::cout<<out;
                 break;
             case Value::Hash:
-                // FIXME: Implement me!
+                hv=(HashValue*)value;
+                for(auto &vf:hv->value()){
+                    std::string s=vf.first;
+                    Value* v=vf.second;
+                    if(v->type()==Value::Integer){
+                        iv=(IntegerValue*)v;
+                        out+=s+"=>"+std::to_string(iv->value())+",";
+                    }else{
+                        sv=(StringValue*)v;
+                        out+=s+"=>"+sv->value()+",";
+                    }
+                }
+                out.pop_back();
+                std::cout<<out;
                 break;
-*/
             default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
         }
     }

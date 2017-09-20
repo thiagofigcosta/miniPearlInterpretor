@@ -1,6 +1,8 @@
 #ifndef SYNTACTICAL_ANALYSIS_H
 #define SYNTACTICAL_ANALYSIS_H
 
+#include <map>
+#include <string>
 #include "../interpreter/expr/Expr.hpp"
 #include "../interpreter/boolexpr/BoolExpr.hpp"
 #include "../interpreter/boolexpr/PostCondition.hpp"
@@ -25,6 +27,7 @@ public:
     void start();
     void execute();
 private:
+	std::map<std::string,Variable*> globalScope;
 	LexicalAnalysis &lex;
 	Lexeme current;
 	Command* program;

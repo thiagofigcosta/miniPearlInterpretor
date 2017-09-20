@@ -1,2 +1,2 @@
 $a=input "Digite um valor positivo";
-println "OK" if($a>0);
+println "OK: ".$a if($a>0);
