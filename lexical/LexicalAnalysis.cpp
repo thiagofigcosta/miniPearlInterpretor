@@ -134,10 +134,12 @@ Lexeme LexicalAnalysis::nextToken() {//dar nome pros estados
     			}
 			break;
 
-			case STATE_STRING://TODO: criar estado para tratar '\''t' '\''n' '\''0'
+			case STATE_STRING:
     			if(c=='\"'){
     				state=STATE_END_KNOWNTYPE;
-    			}else{
+    			}else if(c=='\\'){
+                    state=STATE_XCHAR;
+                }else{
     				if(c==-1)
     					lex.type=TOKEN_UNEXPECTED_EOF;
     				else
@@ -146,6 +148,22 @@ Lexeme LexicalAnalysis::nextToken() {//dar nome pros estados
     					fline++;
     			}
 			break;
+
+            case STATE_XCHAR:
+                switch(c){
+                    default: lex.type=TOKEN_INVALID; break;
+                    case 'n': lex.token+=(char)'\n'; break;
+                    case 't': lex.token+=(char)'\t'; break;
+                    case 'b': lex.token+=(char)'\b'; break;
+                    case 'r': lex.token+=(char)'\r'; break;
+                    case 'a': lex.token+=(char)'\a'; break;
+                    case '0': lex.token+=(char)'\0'; break;
+                    case '\\': lex.token+=(char)'\\';break;
+                    case '\'': lex.token+=(char)'\'';break;
+                    case '\"': lex.token+=(char)'\"';break;
+                }
+                state=STATE_STRING;
+            break;
 
 			case STATE_HVAR_OR_RAMAINER:
     			if(isalpha(c)||isdigit(c)){

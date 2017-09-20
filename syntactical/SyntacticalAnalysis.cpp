@@ -22,6 +22,8 @@
 #include "../interpreter/value/StringValue.hpp"
 #include "../interpreter/value/ListValue.hpp"
 #include "../interpreter/value/HashValue.hpp"
+#include "../interpreter/expr/HashIndexExpr.hpp"
+#include "../interpreter/expr/ListIndexExpr.hpp"
 #include "../interpreter/expr/ScalarVariable.hpp"
 #include "../interpreter/expr/HashVariable.hpp"
 #include "../interpreter/expr/ListVariable.hpp"
@@ -354,13 +356,14 @@ IfHead* SyntacticalAnalysis::procIfHead(){
 }
 
 //<foreach-head> ::= foreach <scalar-var> '(' <rhs> ')'
-ForeachHead* SyntacticalAnalysis::procForeachHead(){//TODO fix me
+ForeachHead* SyntacticalAnalysis::procForeachHead(){
     matchToken(TOKEN_FOREACH);
-    matchToken(TOKEN_SVAR);
+    if(!testToken(TOKEN_SVAR)) matchToken(TOKEN_SVAR);
+    Expr* var=procVar();
     matchToken(TOKEN_OPENTHEPAR);
-    procRHS();
+    Expr* e=procRHS();
     matchToken(TOKEN_CLOSETHEPAR);
-    return nullptr;
+    return new ForeachHead((Variable*)var,e,lex.line());
 }
 
 //<boolexpr> ::= [not] <cmpexpr> [ (and | or) <boolexpr> ]
@@ -420,18 +423,21 @@ SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){
 }
 
 //<rhs> ::= <sexpr> [ '[' <rhs> ']' | '{' <rhs> '}' ]
-Expr*  SyntacticalAnalysis::procRHS(){//TODO fix me
-    Expr* e = procSExpr();
-    // if(testToken(TOKEN_OPENTHECUR)){
-    //     matchToken(TOKEN_OPENTHECUR);
-    //     procRHS();
-    //     matchToken(TOKEN_CLOSETHECUR);
-    // }else if(testToken(TOKEN_OPENTHEBRA)){
-    //     matchToken(TOKEN_OPENTHEBRA);
-    //     procRHS();
-    //     matchToken(TOKEN_CLOSETHEBRA);
-    // }
-    return e;
+Expr*  SyntacticalAnalysis::procRHS(){
+    Expr* e0=procSExpr();
+    Expr* e1=nullptr;
+    if(testToken(TOKEN_OPENTHECUR)){
+        matchToken(TOKEN_OPENTHECUR);
+        e1=procRHS();
+        matchToken(TOKEN_CLOSETHECUR);
+        e0=new HashIndexExpr(e0,e1,lex.line());
+    }else if(testToken(TOKEN_OPENTHEBRA)){
+        matchToken(TOKEN_OPENTHEBRA);
+        e1=procRHS();
+        matchToken(TOKEN_CLOSETHEBRA);
+        e0=new ListIndexExpr(e0,e1,lex.line());
+    }
+    return e0;
 }
 //<sexpr> ::= <expr> { '.' <expr> }
 Expr* SyntacticalAnalysis::procSExpr(){

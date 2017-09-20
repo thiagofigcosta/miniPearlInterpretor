@@ -13,13 +13,13 @@ ListIndexExpr::~ListIndexExpr() {
     	delete index_;
 }
 
-void ListIndexExpr::setValue(Value* value) {
-	if(value->type()!=Value::Integer||value->type()!=Value::String){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
-	}
-	if(base_->type()!=Value::List||index_->type()!=Value::Integer){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
-	}
+void ListIndexExpr::setValue(Value* value) {//TODO remover comentarios
+	// if(value->type()!=Value::Integer&&value->type()!=Value::String){
+	// 	SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+	// }
+	// if(base_->type()!=Value::List&&index_->type()!=Value::Integer){
+	// 	SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+	// }
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();
 	if(value->type()!=Value::Integer){
@@ -31,10 +31,10 @@ void ListIndexExpr::setValue(Value* value) {
 	}
 }
 
-Value* ListIndexExpr::expr() {
-	if(base_->type()!=Value::List||index_->type()!=Value::Integer){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
-	}
+Value* ListIndexExpr::expr() {//TODO remover comentarios
+	// if(base_->type()!=Value::List||index_->type()!=Value::Integer){
+	// 	SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+	// }
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();
 	return lv->value()[iv->value()];

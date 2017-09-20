@@ -1,4 +1,4 @@
-#ifndef INDEXEXPR_Hitit
+#ifndef INDEXEXPR_H
 #define INDEXEXPR_H
 
 #include "Expr.hpp"
