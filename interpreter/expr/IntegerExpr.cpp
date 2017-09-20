@@ -13,7 +13,7 @@ IntegerExpr::~IntegerExpr() {
 }
 
 Value* IntegerExpr::expr() {
-	if(left_->type()!=Expr::Integer||right_->type()!=Expr::Integer){
+	if(left_->type()!=Expr::Integer&&right_->type()!=Expr::Integer&&left_->type()!=Expr::Const&&right_->type()!=Expr::Const){
 		SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
 	}
 	IntegerValue* lv=(IntegerValue*)left_->expr();

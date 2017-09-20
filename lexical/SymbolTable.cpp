@@ -2,7 +2,6 @@
 
 SymbolTable::SymbolTable() {
     m_st["="]=TOKEN_ASSIGN; 
-    m_st["."]=TOKEN_DOT;
     m_st[";"]=TOKEN_DOT_COMMA;
 	m_st[","]=TOKEN_COMMA;
 	m_st["{"]=TOKEN_OPENTHECUR;

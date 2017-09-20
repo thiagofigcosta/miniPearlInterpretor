@@ -4,6 +4,10 @@
 
 #include "../interpreter/boolexpr/IfHead.hpp"
 #include "../interpreter/boolexpr/ForeachHead.hpp"
+#include "../interpreter/boolexpr/CompositeBoolExpr.hpp"
+#include "../interpreter/boolexpr/NotBoolExpr.hpp"
+#include "../interpreter/boolexpr/SingleBoolExpr.hpp"
+#include "../interpreter/command/AssignCommand.hpp"
 #include "../interpreter/command/ActionCommand.hpp"
 #include "../interpreter/command/CommandsBlock.hpp"
 #include "../interpreter/command/IfCommand.hpp"
@@ -15,6 +19,10 @@
 #include "../interpreter/value/IntegerValue.hpp"
 #include "../interpreter/value/StringValue.hpp"
 #include "../interpreter/expr/ConstExpr.hpp"
+#include "../interpreter/expr/IntegerExpr.hpp"
+#include "../interpreter/expr/FunctionExpr.hpp"
+#include "../interpreter/expr/StringconcatExpr.hpp"
+#include "../interpreter/expr/Variable.hpp"
 
 SyntacticalAnalysis::SyntacticalAnalysis(LexicalAnalysis& lex):lex(lex), current(lex.nextToken()) {
 }
@@ -144,13 +152,19 @@ Command* SyntacticalAnalysis::procCmd() {
     return c;
 }
 
-//<assign> ::= <lhs> '=' <rhs> [ <post> ] ';' 
-Command* SyntacticalAnalysis::procAssign(){//TODO fix me
+//<assign> ::= <var> '=' <rhs> [ <post> ] ';' 
+Command* SyntacticalAnalysis::procAssign(){
+    Command* ac=nullptr;
+    Expr* var=procVar();
     matchToken(TOKEN_ASSIGN);
-    procRHS();
-    //procPost();
+    Expr* e=procRHS();
+    ac=new AssignCommand((SetExpr*)var,e,lex.line());
+    if(testToken(TOKEN_IF)){
+        IfHead* post=procIfHead();
+        ac=new IfCommand(post,ac,lex.line());
+    }
     matchToken(TOKEN_DOT_COMMA);
-    return nullptr;
+    return ac;
 }
 
 //<action> ::= (print <rhs> | println [<rhs>] | push <rhs> ',' <rhs> | unshift <rhs> [ ',' <rhs> ]) [ <post> ] ';'
@@ -343,41 +357,59 @@ ForeachHead* SyntacticalAnalysis::procForeachHead(){//TODO fix me
 }
 
 //<boolexpr> ::= [not] <cmpexpr> [ (and | or) <boolexpr> ]
-BoolExpr* SyntacticalAnalysis::procBoolExpr(){//TODO fix me
-    if(testToken(TOKEN_NOT))
+BoolExpr* SyntacticalAnalysis::procBoolExpr(){
+    BoolExpr* be0=nullptr;
+    bool negate=false;
+    if(testToken(TOKEN_NOT)){
         matchToken(TOKEN_NOT);
-    procCmpExpr();
-    if(testToken(TOKEN_AND)||testToken(TOKEN_OR)){
-        consumeToken();
-        procBoolExpr();
+        negate=true;
     }
-    return nullptr;
+    be0=procCmpExpr();
+    if(negate)
+        be0=new NotBoolExpr(be0,lex.line());
+    if(testToken(TOKEN_AND)||testToken(TOKEN_OR)){
+        CompositeBoolExpr::BoolOp op;
+        if(testToken(TOKEN_AND))
+            op=CompositeBoolExpr::And;
+        else
+            op=CompositeBoolExpr::Or;
+        consumeToken();
+        BoolExpr* be1=procBoolExpr();
+        be0=new CompositeBoolExpr(be0,op,be1,lex.line());
+    }
+    return be0;
 }
 
 //<cmpexpr> ::= <sexpr> <relop> <sexpr>
-BoolExpr* SyntacticalAnalysis::procCmpExpr(){//TODO fix me
-    procSExpr();
-    procBoolOp();
-    procSExpr();
-    return nullptr;
+BoolExpr* SyntacticalAnalysis::procCmpExpr(){
+    Expr* e0=procSExpr();
+    SingleBoolExpr::RelOp op=procBoolOp();
+    Expr* e1=procSExpr();
+    return new SingleBoolExpr(e0,op,e1,lex.line());
 }
 
 //<relop> ::= '==' | '!=' | '<' | '>' | '<=' | '>='
-SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){//TODO fix me
+SingleBoolExpr::RelOp SyntacticalAnalysis::procBoolOp(){
+    SingleBoolExpr::RelOp op;
     switch (current.type) {
         case TOKEN_EQUAL:
+            op=SingleBoolExpr::Equal;break;
         case TOKEN_DIFF:
+            op=SingleBoolExpr::NotEqual;break;
         case TOKEN_LESS:
+            op=SingleBoolExpr::LowerThan;break;
         case TOKEN_GREATHER:
+            op=SingleBoolExpr::GreaterThan;break;
         case TOKEN_LESS_EQUAL:
+            op=SingleBoolExpr::LowerEqual;break;
         case TOKEN_GREATHER_EQUAL:
-            consumeToken();
-            break;
+            op=SingleBoolExpr::GreaterEqual;break;
         default:
             showError("('=='|'!='|'<'|'>'|'<='|'>=')");
             break;
     }
-    return SingleBoolExpr::RelOp::NotEqual;
+    consumeToken();
+    return op;
 }
 
 //<rhs> ::= <sexpr> [ '[' <rhs> ']' | '{' <rhs> '}' ]
@@ -394,46 +426,62 @@ Expr*  SyntacticalAnalysis::procRHS(){//TODO fix me
     }
     return e;
 }
-
 //<sexpr> ::= <expr> { '.' <expr> }
-Expr* SyntacticalAnalysis::procSExpr(){//TODO fix me
-    Expr* e=nullptr;
+Expr* SyntacticalAnalysis::procSExpr(){
+    Expr* e0=procExpr();
     do{
-        e=procExpr();
-        if(testToken(TOKEN_DOT))
+        if(testToken(TOKEN_CONCAT)){
             consumeToken();
-        else break;
+            Expr* e1=procExpr();
+            e0=new StringconcatExpr(e0,e1,lex.line());
+        }else break;
     }while(true);
-    return e;
+    return e0;
 }
 
 //<expr> ::= <term> { ('+' | '-') <term> }
-Expr* SyntacticalAnalysis::procExpr(){//TODO fix me
-    Expr* e=nullptr;
+Expr* SyntacticalAnalysis::procExpr(){
+    Expr* e0=procTerm();
     do{
-        e=procTerm();
-        if(testToken(TOKEN_PLUS)||testToken(TOKEN_MINUS))
+        if(testToken(TOKEN_PLUS)||testToken(TOKEN_MINUS)){
+            Expr* e1=nullptr;
+            IntegerExpr::IntegerOp op;
+            if(testToken(TOKEN_PLUS))
+                op=IntegerExpr::Add;
+            else
+                op=IntegerExpr::Sub;
             consumeToken();
-        else break;
+            e1=procTerm();
+            e0=new IntegerExpr(e0,op,e1,lex.line());
+        }else break;
     }while(true);
-    return e;
+    return e0;
 }
 
 //<term> ::= <factor> { ('*' | '/' | '%') <factor> }
-Expr* SyntacticalAnalysis::procTerm(){//TODO fix me
-    Expr* e=nullptr;
+Expr* SyntacticalAnalysis::procTerm(){
+    Expr* e0=procFactor();
     do{
-        e=procFactor();
-        if(testToken(TOKEN_TIMES)||testToken(TOKEN_DIV)||testToken(TOKEN_MOD))
+        if(testToken(TOKEN_TIMES)||testToken(TOKEN_DIV)||testToken(TOKEN_MOD)){
+            Expr* e1=nullptr;
+            IntegerExpr::IntegerOp op;
+            if(testToken(TOKEN_TIMES))
+                op=IntegerExpr::Mul;
+            else if(testToken(TOKEN_DIV))
+                op=IntegerExpr::Div;
+            else
+                op=IntegerExpr::Mod;
             consumeToken();
-        else break;
+            e1=procFactor();
+            e0=new IntegerExpr(e0,op,e1,lex.line());
+        }else break;
     }while(true);
-    return e;
+    return e0;
 }
 
 //<factor> ::= <number> | <string> | <function> | <var> | <list> | <hash> | '(' <sexpr> ')'
-Expr* SyntacticalAnalysis::procFactor(){//TODO fix me
-    Expr* e = 0;
+Expr* SyntacticalAnalysis::procFactor(){
+    Expr* e=nullptr;
     switch (current.type) {
         case TOKEN_NUMBER:
             e=procNumber();
@@ -451,12 +499,14 @@ Expr* SyntacticalAnalysis::procFactor(){//TODO fix me
             e=procFunction();
             break;
         case TOKEN_SVAR:
+        case TOKEN_LVAR:
+        case TOKEN_HVAR:
             e=procVar();
             break;    
-        case TOKEN_LVAR:
+        case TOKEN_OPENTHECUR:
             e=procList();
             break;
-        case TOKEN_HVAR:
+        case TOKEN_OPENTHEBRA:
             e=procHash();
             break;
         case TOKEN_OPENTHEPAR:
@@ -472,24 +522,30 @@ Expr* SyntacticalAnalysis::procFactor(){//TODO fix me
 }
 
 //<function> ::= (input | size | sort | reverse | keys | values | empty) <rhs>
-Expr* SyntacticalAnalysis::procFunction(){//TODO fix me
-    Expr* e = 0;
+Expr* SyntacticalAnalysis::procFunction(){
+    FunctionExpr::FunctionType op;
     switch (current.type) {
         case TOKEN_INPUT:
+            op=FunctionExpr::Input;break;
         case TOKEN_SIZE:
+            op=FunctionExpr::Size;break;
         case TOKEN_SORT:
+            op=FunctionExpr::Sort;break;
         case TOKEN_REVERSE:
+            op=FunctionExpr::Reverse;break;
         case TOKEN_KEYS:
+            op=FunctionExpr::Keys;break;
         case TOKEN_VALUES:
+            op=FunctionExpr::Values;break;
         case TOKEN_EMPTY:
-            consumeToken();
-            procRHS();
-            break;
+            op=FunctionExpr::Empty;break;
         default:
             showError("function");
             break;
     }
-    return e;
+    consumeToken();
+    Expr* e=procRHS();
+    return new FunctionExpr(op,e,lex.line());
 }
 
 //<var> ::= <scalar-var> | <list-var> | <hash-var>

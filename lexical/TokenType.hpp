@@ -9,7 +9,6 @@ enum TokenType {
 
     // symbols
     TOKEN_ASSIGN,//=
-    TOKEN_DOT,//=.
 	TOKEN_DOT_COMMA,//=;
 	TOKEN_COMMA,//,
 	TOKEN_OPENTHECUR,//{

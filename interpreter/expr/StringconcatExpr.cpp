@@ -12,7 +12,7 @@ StringconcatExpr::~StringconcatExpr() {
 }
 
 Value* StringconcatExpr::expr() {
-	if(left_->type()!=Expr::String||right_->type()!=Expr::String){
+	if(left_->type()!=Expr::String&&right_->type()!=Expr::String&&left_->type()!=Expr::Const&&right_->type()!=Expr::Const){
 		SyntacticalAnalysis::showError("Invalid type on string expr",line_);
 	}
 	StringValue* lv=(StringValue*)left_->expr();
