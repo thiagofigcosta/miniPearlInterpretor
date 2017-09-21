@@ -26,7 +26,7 @@ PrintCommand::~PrintCommand() {
 }
 
 void PrintCommand::execute() {
-    if (expr_) {
+    if (expr_){
         std::string out="";
         Value* value=expr_->expr();
         StringValue* sv;
@@ -76,7 +76,6 @@ void PrintCommand::execute() {
             default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
         }
     }
-
     if (newLine_)
-        std::cout << std::endl;
+        std::cout<<std::endl;
 }

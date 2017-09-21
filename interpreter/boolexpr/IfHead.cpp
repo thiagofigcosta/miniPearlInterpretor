@@ -10,10 +10,5 @@ IfHead::~IfHead() {
 }
 
 bool IfHead::expr() {
-    //TODO fix me
     return expr_->expr();
-}
-
-void IfHead::reset() {
-    //TODO fix me
 }

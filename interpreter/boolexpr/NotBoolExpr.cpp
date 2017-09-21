@@ -10,5 +10,5 @@ NotBoolExpr::~NotBoolExpr() {
 }
 
 bool NotBoolExpr::expr() {
-    return bool_expr->expr();
+    return !bool_expr->expr();
 }

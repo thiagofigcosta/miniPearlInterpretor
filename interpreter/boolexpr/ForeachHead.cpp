@@ -15,6 +15,6 @@ bool ForeachHead::expr() {
     return false;
 }
 
-void ForeachHead::reset() {
-	//TODO fix me
+Variable* ForeachHead::getVar(){
+	return var_;
 }

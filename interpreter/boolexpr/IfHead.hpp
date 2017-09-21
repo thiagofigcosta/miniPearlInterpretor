@@ -9,7 +9,6 @@ public:
     explicit IfHead(BoolExpr* expr, int line);
     virtual ~IfHead();
 
-    void reset();
     bool expr();
 
 private:

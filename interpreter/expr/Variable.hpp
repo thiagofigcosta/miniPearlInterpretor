@@ -13,6 +13,8 @@ public:
 
     virtual void setValue(Value* value) = 0;
 
+    Value* value(){return value_;}
+    
     std::string getName(){return name_;}
 protected:
     std::string name_;

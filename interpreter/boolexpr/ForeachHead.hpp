@@ -10,8 +10,8 @@ public:
     explicit ForeachHead(Variable* var,Expr* expr, int line);
     virtual ~ForeachHead();
 
-    void reset();
     bool expr();
+    Variable* getVar();
 
 private:
     Expr* expr_;

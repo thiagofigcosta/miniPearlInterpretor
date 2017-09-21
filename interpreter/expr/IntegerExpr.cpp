@@ -12,10 +12,10 @@ IntegerExpr::~IntegerExpr() {
 	delete right_;
 }
 
-Value* IntegerExpr::expr() {
-	if(left_->type()!=Expr::Integer&&right_->type()!=Expr::Integer&&left_->type()!=Expr::Const&&right_->type()!=Expr::Const){
-		SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
-	}
+Value* IntegerExpr::expr() {//TODO remover comentarios
+	// if(left_->type()!=Expr::Integer&&right_->type()!=Expr::Integer&&left_->type()!=Expr::Const&&right_->type()!=Expr::Const){
+	// 	SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
+	// }
 	IntegerValue* lv=(IntegerValue*)left_->expr();
 	IntegerValue* rv=(IntegerValue*)right_->expr();
 	int l=lv->value();

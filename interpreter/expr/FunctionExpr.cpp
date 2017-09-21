@@ -16,11 +16,12 @@ FunctionExpr::~FunctionExpr() {
 }
 
 
-Value* FunctionExpr::expr() {
+Value* FunctionExpr::expr(){
 	ListValue* lv;
 	HashValue* hv;
 	std::string in;
 	Value* val;
+	bool isNumber=true;
 	Value* paramVal=param_->expr();
 	switch(type_){
 		case Input:
@@ -31,7 +32,15 @@ Value* FunctionExpr::expr() {
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
 			std::getline(std::cin,in);
-			return new StringValue(in,line_);
+			for(char c:in)
+				if((c<'0'||c>'9')&&(c!='-')){
+					isNumber=false;
+					break;
+				}
+			if(isNumber)
+				return new IntegerValue(std::stoi(in),line_);
+			else
+			    return new StringValue(in,line_);
 		case Size:
 			int size;
 			if(paramVal->type()==Value::List){
