@@ -2,7 +2,7 @@
 %alunos = {};
 # Colocar os alunos no dicionário.
 do {
-	$nome = input "Entre com o nome: ";
+	$nome=input "Entre com o nome: ";
 	%alunos{$nome} = input "Entre com a nota de " . $nome . ": " if (not empty $nome);
 } while (not empty $nome);
 # Obter a lista de nomes de alunos.

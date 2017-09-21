@@ -11,11 +11,12 @@ IntegerExpr::~IntegerExpr() {
 	delete left_;
 	delete right_;
 }
-
-Value* IntegerExpr::expr() {//TODO remover comentarios
-	// if(left_->type()!=Expr::Integer&&right_->type()!=Expr::Integer&&left_->type()!=Expr::Const&&right_->type()!=Expr::Const){
-	// 	SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
-	// }
+Value* IntegerExpr::expr(){
+	Value* ltv=(Value*)left_->expr();
+	Value* rtv=(Value*)right_->expr();
+	if((ltv->type()!=Expr::Integer&&left_->type()!=Expr::Const&&left_->type()!=Expr::Function&&left_->type()!=Expr::Set)||(rtv->type()!=Expr::Integer&&right_->type()!=Expr::Const&&right_->type()!=Expr::Function&&right_->type()!=Expr::Set)){
+		SyntacticalAnalysis::showError("Invalid type on integer expr",line_);
+	}
 	IntegerValue* lv=(IntegerValue*)left_->expr();
 	IntegerValue* rv=(IntegerValue*)right_->expr();
 	int l=lv->value();
