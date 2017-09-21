@@ -27,7 +27,7 @@ Value* FunctionExpr::expr(){
 		case Input:
 			if(paramVal->type()==Value::String){
 				StringValue* sv=(StringValue*)paramVal;
-				std::cout<<sv->value();
+				std::cout<<sv->value()<<" ";
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}

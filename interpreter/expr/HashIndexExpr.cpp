@@ -24,12 +24,23 @@ void HashIndexExpr::setValue(Value* value) {
 	}
 	HashValue* hv=(HashValue*)base_->expr();
 	StringValue* sv=(StringValue*)index_->expr();
-	if(value->type()!=Value::Integer){
+	if(value->type()==Value::String){
 		StringValue* sattr=(StringValue*)value;
 		hv->value()[sv->value()]=sattr;
-	}else if(value->type()!=Value::String){
+		//TODO deveria ser apenas hv->value()[sv->value()]=sattr;
+		Value* tmpV=hv->value()[sv->value()];
+		if(tmpV->type()==Value::String){
+			StringValue* tmpVS=(StringValue*)tmpV;
+			tmpVS->setValue(sattr->value());
+		}
+	}else if(value->type()==Value::Integer){
 		IntegerValue* iattr=(IntegerValue*)value;
-		hv->value()[sv->value()]=iattr;
+		//TODO deveria ser apenas hv->value()[sv->value()]=iattr;
+		Value* tmpV=hv->value()[sv->value()];
+		if(tmpV->type()==Value::Integer){
+			IntegerValue* tmpVI=(IntegerValue*)tmpV;
+			tmpVI->setValue(iattr->value());
+		}
 	}
 }
 

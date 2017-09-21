@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     try {
         LexicalAnalysis l(argv[1]);
         SyntacticalAnalysis s(l);
-        // l.printTokens();
+        //l.printTokens();
         s.start();
         s.execute();
     } catch (std::string msg) {

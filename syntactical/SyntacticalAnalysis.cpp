@@ -393,9 +393,13 @@ BoolExpr* SyntacticalAnalysis::procBoolExpr(){
 //<cmpexpr> ::= <sexpr> <relop> <sexpr>
 BoolExpr* SyntacticalAnalysis::procCmpExpr(){
     Expr* e0=procSExpr();
-    SingleBoolExpr::RelOp op=procBoolOp();
-    Expr* e1=procSExpr();
-    return new SingleBoolExpr(e0,op,e1,lex.line());
+    if(testToken(TOKEN_EQUAL)||testToken(TOKEN_DIFF)||testToken(TOKEN_LESS)||testToken(TOKEN_GREATHER)||testToken(TOKEN_LESS_EQUAL)||testToken(TOKEN_GREATHER_EQUAL)){
+        SingleBoolExpr::RelOp op=procBoolOp();
+        Expr* e1=procSExpr();
+        return new SingleBoolExpr(e0,op,e1,lex.line());
+    }else{
+        return new SingleBoolExpr(e0,SingleBoolExpr::NotEqual,new ConstExpr(new IntegerValue(0,lex.line()),lex.line()),lex.line());
+    }
 }
 
 //<relop> ::= '==' | '!=' | '<' | '>' | '<=' | '>='
@@ -565,6 +569,7 @@ Expr* SyntacticalAnalysis::procFunction(){
 //<var> ::= <scalar-var> | <list-var> | <hash-var>
 Expr* SyntacticalAnalysis::procVar(){
     Expr* e=nullptr;
+    Expr* idx=nullptr;
     switch (current.type) {
         case TOKEN_SVAR:
         case TOKEN_LVAR:
@@ -576,6 +581,23 @@ Expr* SyntacticalAnalysis::procVar(){
     }
     if(globalScope.find(current.token)!=globalScope.end()){
         e=(Expr*)globalScope[current.token];
+        if(testToken(TOKEN_HVAR)){
+            consumeToken();
+            if(testToken(TOKEN_OPENTHECUR)){
+                matchToken(TOKEN_OPENTHECUR);
+                idx=procRHS();
+                matchToken(TOKEN_CLOSETHECUR);
+                e=new HashIndexExpr(e,idx,lex.line());
+            }
+        }else if(testToken(TOKEN_LVAR)){
+            consumeToken();
+            if(testToken(TOKEN_OPENTHEBRA)){
+                matchToken(TOKEN_OPENTHEBRA);
+                idx=procRHS();
+                matchToken(TOKEN_CLOSETHEBRA);
+                e=new ListIndexExpr(e,idx,lex.line());
+            }
+        }else consumeToken();
     }else{
         if(testToken(TOKEN_SVAR))
             e=new ScalarVariable(current.token);
@@ -584,8 +606,8 @@ Expr* SyntacticalAnalysis::procVar(){
         else
             e=new HashVariable(current.token);
         globalScope[current.token]=(Variable*)e;
+        consumeToken();
     }
-    consumeToken();
     return e;
 }
 

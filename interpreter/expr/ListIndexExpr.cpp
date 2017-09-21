@@ -12,7 +12,6 @@ ListIndexExpr::~ListIndexExpr() {
     if(index_)
     	delete index_;
 }
-
 void ListIndexExpr::setValue(Value* value) {
 	if(value->type()!=Value::Integer&&value->type()!=Value::String){
 		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
@@ -24,12 +23,23 @@ void ListIndexExpr::setValue(Value* value) {
 	}
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();
-	if(value->type()!=Value::Integer){
+	if(value->type()==Value::String){
 		StringValue* sattr=(StringValue*)value;
 		lv->value()[iv->value()]=sattr;
-	}else if(value->type()!=Value::String){
+		//TODO deveria ser apenas lv->value()[iv->value()]=sattr;
+		Value* tmpV=lv->value()[iv->value()];
+		if(tmpV->type()==Value::String){
+			StringValue* tmpVS=(StringValue*)tmpV;
+			tmpVS->setValue(sattr->value());
+		}
+	}else if(value->type()==Value::Integer){
 		IntegerValue* iattr=(IntegerValue*)value;
-		lv->value()[iv->value()]=iattr;
+		//TODO deveria ser apenas lv->value()[iv->value()]=iattr;
+		Value* tmpV=lv->value()[iv->value()];
+		if(tmpV->type()==Value::Integer){
+			IntegerValue* tmpVI=(IntegerValue*)tmpV;
+			tmpVI->setValue(iattr->value());
+		}
 	}
 }
 

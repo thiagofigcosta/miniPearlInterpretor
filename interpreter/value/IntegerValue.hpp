@@ -8,6 +8,8 @@ public:
     explicit IntegerValue(int intValue, int line);
     virtual ~IntegerValue();
 
+    void setValue(int new_value){int_value=new_value;}
+
     virtual int value();
 
 private:
