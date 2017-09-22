@@ -64,7 +64,7 @@ void SyntacticalAnalysis::showError() {
 }
 void SyntacticalAnalysis::showError(TokenType token) {
     std::string err;
-    err="Unkown token";
+    err="Unkown token("+std::to_string(token)+")";
     for(auto &i:lex.getSymbolMap()){
         if(i.second==token){
             err="\'"+i.first+"\'";
@@ -349,9 +349,12 @@ PostCondition* SyntacticalAnalysis::procPost(){
 IfHead* SyntacticalAnalysis::procIfHead(){
     BoolExpr* expr=nullptr;
     matchToken(TOKEN_IF);
-    matchToken(TOKEN_OPENTHEPAR);
-    expr=procBoolExpr();
-    matchToken(TOKEN_CLOSETHEPAR);
+    if(testToken(TOKEN_OPENTHEPAR)){
+        matchToken(TOKEN_OPENTHEPAR);
+        expr=procBoolExpr();
+        matchToken(TOKEN_CLOSETHEPAR);
+    }else
+        expr=procBoolExpr();
     return new IfHead(expr,lex.line());
 }
 
