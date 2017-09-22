@@ -19,6 +19,7 @@ FunctionExpr::~FunctionExpr() {
 Value* FunctionExpr::expr(){
 	ListValue* lv;
 	HashValue* hv;
+	StringValue* sv;
 	std::string in;
 	Value* val;
 	bool isNumber=true;
@@ -107,6 +108,9 @@ Value* FunctionExpr::expr(){
 			}else if(paramVal->type()==Value::Hash){
 				hv=(HashValue*)paramVal;
 				empt=hv->value().size();
+			}else if(paramVal->type()==Value::String){
+				sv=(StringValue*)paramVal;
+				empt=sv->value()=="";
 			}else {
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
