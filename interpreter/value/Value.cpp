@@ -8,12 +8,12 @@ bool Value::cmp(Value *a, Value *b){
         StringValue* As=(StringValue*)a;
         StringValue* Bs=(StringValue*)b;
         return As->value()<Bs->value();
-    }else if(a->type()==Value::String&&b->type()==Value::String){
+    }else if(a->type()==Value::Integer&&b->type()==Value::Integer){
         IntegerValue* Ai=(IntegerValue*)a;
         IntegerValue* Bi=(IntegerValue*)b;
         return Ai->value()<Bi->value();
     }else{
-        SyntacticalAnalysis::showError("Invalid type on for comparison",-1);
+        SyntacticalAnalysis::showError("Invalid type("+std::to_string(a->type())+","+std::to_string(b->type())+") on for comparison",-1);
     }
     return false;
 }

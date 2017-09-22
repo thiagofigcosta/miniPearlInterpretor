@@ -15,11 +15,11 @@ FunctionExpr::~FunctionExpr() {
     	delete param_;
 }
 
-
 Value* FunctionExpr::expr(){
 	ListValue* lv;
 	HashValue* hv;
 	StringValue* sv;
+	IntegerValue* iv;
 	std::string in;
 	Value* val;
 	bool isNumber=true;
@@ -27,7 +27,7 @@ Value* FunctionExpr::expr(){
 	switch(type_){
 		case Input:
 			if(paramVal->type()==Value::String){
-				StringValue* sv=(StringValue*)paramVal;
+				sv=(StringValue*)paramVal;
 				std::cout<<sv->value()<<" ";
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
@@ -38,7 +38,7 @@ Value* FunctionExpr::expr(){
 					isNumber=false;
 					break;
 				}
-			if(isNumber)
+			if(isNumber&&in!="")
 				return new IntegerValue(std::stoi(in),line_);
 			else
 			    return new StringValue(in,line_);
@@ -59,6 +59,10 @@ Value* FunctionExpr::expr(){
 				lv=(ListValue*)paramVal;
 				ListValue* sortedl=ListValue::clone(lv);
 				std::sort(sortedl->value().begin(),sortedl->value().end(),Value::cmp);
+				for(Value* v:sortedl->value()){//TODO delete me
+					iv=(IntegerValue*)v;
+					std::cout<<iv->value()<<std::endl;
+				}
 				return sortedl;
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
@@ -110,8 +114,11 @@ Value* FunctionExpr::expr(){
 				empt=hv->value().size();
 			}else if(paramVal->type()==Value::String){
 				sv=(StringValue*)paramVal;
-				empt=sv->value()=="";
-			}else {
+				if(sv->value()=="")
+					empt=0;
+			}else if(paramVal->type()==Value::Integer){
+					empt=0;
+			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
 			return new IntegerValue(empt==0,line_);

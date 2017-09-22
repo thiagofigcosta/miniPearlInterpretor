@@ -1,4 +1,7 @@
-@l=[6,6,7,8,94,5,312,5,7];
-foreach $x (@l){
+@l=[1,2,3];
+println "Fora de ordem:";
+foreach $x (@l)
 	println $x;
-}
+println "Ordenado:";
+foreach $x (reverse @l)
+	println $x;
