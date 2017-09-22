@@ -1,5 +1,6 @@
 #include "ListIndexExpr.hpp"
 #include "../value/ListValue.hpp"
+#include "../expr/SetExpr.hpp"
 #include "../../syntactical/SyntacticalAnalysis.hpp"
 
 ListIndexExpr::ListIndexExpr(Expr* base, Expr* index, int line)
@@ -25,8 +26,6 @@ void ListIndexExpr::setValue(Value* value) {
 	IntegerValue* iv=(IntegerValue*)index_->expr();
 	if(value->type()==Value::String){
 		StringValue* sattr=(StringValue*)value;
-		lv->value()[iv->value()]=sattr;
-		//TODO deveria ser apenas lv->value()[iv->value()]=sattr;
 		Value* tmpV=lv->value()[iv->value()];
 		if(tmpV->type()==Value::String){
 			StringValue* tmpVS=(StringValue*)tmpV;
@@ -34,7 +33,6 @@ void ListIndexExpr::setValue(Value* value) {
 		}
 	}else if(value->type()==Value::Integer){
 		IntegerValue* iattr=(IntegerValue*)value;
-		//TODO deveria ser apenas lv->value()[iv->value()]=iattr;
 		Value* tmpV=lv->value()[iv->value()];
 		if(tmpV->type()==Value::Integer){
 			IntegerValue* tmpVI=(IntegerValue*)tmpV;

@@ -11,7 +11,7 @@ public:
 
     Value* expr(){return value_;}
 
-    virtual void setValue(Value* value) = 0;
+    virtual void setValue(Value* value)=0;
 
     Value* value(){return value_;}
     

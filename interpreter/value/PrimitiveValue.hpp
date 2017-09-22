@@ -9,7 +9,7 @@ public:
     explicit PrimitiveValue(enum Value::Type type, int line) : Value(type, line) {}
     virtual ~PrimitiveValue() {}
 
-    virtual T value() = 0;
+    virtual T value()=0;
 };
 
 #endif

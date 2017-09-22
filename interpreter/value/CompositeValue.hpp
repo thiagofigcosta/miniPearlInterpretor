@@ -9,7 +9,7 @@ public:
     explicit CompositeValue(enum Value::Type type, int line) : Value(type, line) {}
     virtual ~CompositeValue() {}
 
-    virtual T value() = 0;
+    virtual T value()=0;
 };
 
 #endif

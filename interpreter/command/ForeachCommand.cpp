@@ -1,5 +1,6 @@
 #include "ForeachCommand.hpp"
-
+#include "../expr/SetExpr.hpp"
+#include "../value/ListValue.hpp"
 #include <cassert>
 
 ForeachCommand::ForeachCommand(ForeachHead* cond, Command* then, int line) 
@@ -12,5 +13,10 @@ ForeachCommand::~ForeachCommand() {
 }
 
 void ForeachCommand::execute() {
-    //TODO FIX ME
+    SetExpr* se=(SetExpr*)cond_->getVar();
+    ListValue* lv=cond_->getList();
+    for(Value* v:lv->value()){
+    	se->setValue(v);
+    	then_->execute();
+    }
 }

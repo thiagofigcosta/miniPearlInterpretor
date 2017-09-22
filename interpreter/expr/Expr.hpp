@@ -18,7 +18,7 @@ public:
     Expr::Type type() const { return type_; }
     int line() const { return line_; }
 
-    virtual Value* expr() = 0;
+    virtual Value* expr()=0;
 
 protected:
     explicit Expr(Expr::Type type, int line) : type_(type), line_(line) {}

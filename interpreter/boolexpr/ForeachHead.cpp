@@ -10,11 +10,15 @@ ForeachHead::~ForeachHead() {
     delete expr_;
 }
 
-bool ForeachHead::expr() {
-	//TODO fix me
-    return false;
+ListValue* ForeachHead::getList() {
+	ListValue* lv=(ListValue*)expr_->expr();
+    return lv;
 }
 
 Variable* ForeachHead::getVar(){
 	return var_;
+}
+
+bool ForeachHead::expr() {
+    return true;
 }

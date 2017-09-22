@@ -13,8 +13,7 @@ CommandsBlock::~CommandsBlock() {
 }
 
 void CommandsBlock::addCommand(Command* c) {
-    assert(c != 0);
-
+    assert(c!=0);
     m_cmds.push_back(c);
 }
 

@@ -6,7 +6,7 @@ public:
     virtual ~Command() {}
 
     int line() const { return line_; }
-    virtual void execute() = 0;
+    virtual void execute()=0;
 
 protected:
     explicit Command(int line) : line_(line) {}

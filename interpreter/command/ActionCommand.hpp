@@ -8,7 +8,7 @@ public:
     explicit ActionCommand(int line) : Command(line) {}
     virtual ~ActionCommand() {}
 
-    virtual void execute() = 0;
+    virtual void execute()=0;
 };
 
 #endif
