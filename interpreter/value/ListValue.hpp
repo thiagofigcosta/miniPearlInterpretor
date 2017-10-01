@@ -11,10 +11,8 @@ public:
     explicit ListValue(int line);
     explicit ListValue(std::vector<Value*> l,int line);
     virtual ~ListValue();
-
+    void setVec(std::vector<Value*> l);
     virtual std::vector<Value*> value();
-
-	static ListValue* clone(const ListValue* orig);
 private:
     std::vector<Value*> list_value;
 

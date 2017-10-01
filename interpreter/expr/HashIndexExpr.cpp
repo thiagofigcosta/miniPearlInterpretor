@@ -12,40 +12,29 @@ HashIndexExpr::~HashIndexExpr() {
     if(index_)
     	delete index_;
 }
-
+#include <iostream>
 void HashIndexExpr::setValue(Value* value) {
+    std::map<std::string,Value*> mapVal;
 	if(value->type()!=Value::Integer&&value->type()!=Value::String){
 		SyntacticalAnalysis::showError("Invalid type on set hash var at idx",line_);
 	}
 	Value* basev=(Value*)base_->expr();
 	Value* idexv=(Value*)index_->expr();
 	if(basev->type()!=Value::Hash||idexv->type()!=Value::String){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid map on set hash var at idx",line_);
 	}
 	HashValue* hv=(HashValue*)base_->expr();
 	StringValue* sv=(StringValue*)index_->expr();
-	if(value->type()==Value::String){
-		StringValue* sattr=(StringValue*)value;
-		Value* tmpV=hv->value()[sv->value()];
-		if(tmpV->type()==Value::String){
-			StringValue* tmpVS=(StringValue*)tmpV;
-			tmpVS->setValue(sattr->value());
-		}
-	}else if(value->type()==Value::Integer){
-		IntegerValue* iattr=(IntegerValue*)value;
-		Value* tmpV=hv->value()[sv->value()];
-		if(tmpV->type()==Value::Integer){
-			IntegerValue* tmpVI=(IntegerValue*)tmpV;
-			tmpVI->setValue(iattr->value());
-		}
-	}
+    mapVal=hv->value();
+    mapVal[sv->value()]=value;
+    hv->setMap(mapVal);
 }
 
 Value* HashIndexExpr::expr() {
 	Value* basev=(Value*)base_->expr();
 	Value* idexv=(Value*)index_->expr();
 	if(basev->type()!=Value::Hash||idexv->type()!=Value::String){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid map on get hash var at idx",line_);
 	}
 	HashValue* hv=(HashValue*)base_->expr();
 	StringValue* sv=(StringValue*)index_->expr();

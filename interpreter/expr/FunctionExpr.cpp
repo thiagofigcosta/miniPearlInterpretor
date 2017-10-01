@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "../../syntactical/SyntacticalAnalysis.hpp"
 
-FunctionExpr::FunctionExpr(FunctionType type, Expr* param, int line) 
+FunctionExpr::FunctionExpr(FunctionType type, Expr* param, int line)
 	: Expr(Expr::Function, line), type_(type), param_(param) {
 }
 
@@ -22,6 +22,7 @@ Value* FunctionExpr::expr(){
 	IntegerValue* iv;
 	std::string in;
 	Value* val;
+	std::vector<Value*> valVec;
 	bool isNumber=true;
 	Value* paramVal=param_->expr();
 	switch(type_){
@@ -39,7 +40,7 @@ Value* FunctionExpr::expr(){
 					break;
 				}
 			if(isNumber&&in!="")
-				return new IntegerValue(std::stoi(in),line_);
+				return new IntegerValue(Value::to_int(in),line_);
 			else
 			    return new StringValue(in,line_);
 		case Size:
@@ -57,13 +58,9 @@ Value* FunctionExpr::expr(){
 		case Sort:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				ListValue* sortedl=ListValue::clone(lv);
-				std::sort(sortedl->value().begin(),sortedl->value().end(),Value::cmp);
-				for(Value* v:sortedl->value()){//TODO delete me
-					iv=(IntegerValue*)v;
-					std::cout<<iv->value()<<std::endl;
-				}
-				return sortedl;
+				valVec=lv->value();
+				std::sort(valVec.begin(),valVec.end(),Value::cmp);
+				return new ListValue(valVec,line_);
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
@@ -71,9 +68,9 @@ Value* FunctionExpr::expr(){
 		case Reverse:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				ListValue* reversel=ListValue::clone(lv);
-				std::reverse(reversel->value().begin(),reversel->value().end());
-				return reversel;
+				valVec=lv->value();
+				std::reverse(valVec.begin(),valVec.end());
+				return new ListValue(valVec,line_);
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
@@ -105,28 +102,35 @@ Value* FunctionExpr::expr(){
 				}
 			break;
 		case Empty:
-			int empt;
+			int sz;
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				empt=lv->value().size();
+				sz=lv->value().size();
 			}else if(paramVal->type()==Value::Hash){
 				hv=(HashValue*)paramVal;
-				empt=hv->value().size();
+				sz=hv->value().size();
 			}else if(paramVal->type()==Value::String){
 				sv=(StringValue*)paramVal;
 				if(sv->value()=="")
-					empt=0;
+					sz=0;
+				else
+					sz=1;
 			}else if(paramVal->type()==Value::Integer){
-					empt=0;
+					sz=0;
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
 			}
-			return new IntegerValue(empt==0,line_);
+			return new IntegerValue(sz==0,line_);
 		case Pop:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				val=lv->value().back();
-				lv->value().pop_back();
+				valVec=lv->value();
+				if(valVec.size()>0){
+					val=valVec.back();
+					valVec.pop_back();
+					lv->setVec(valVec);
+				}else
+					val=0;
 				return val;
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);
@@ -135,8 +139,13 @@ Value* FunctionExpr::expr(){
 		case Shift:
 			if(paramVal->type()==Value::List){
 				lv=(ListValue*)paramVal;
-				val=lv->value()[0];
-				lv->value().erase(lv->value().begin());
+				valVec=lv->value();
+				if(valVec.size()>0){
+					val=valVec[0];
+					valVec.erase(valVec.begin());
+					lv->setVec(valVec);
+				}else
+					val=0;
 				return val;
 			}else{
 				SyntacticalAnalysis::showError("Invalid value type on function expr",line_);

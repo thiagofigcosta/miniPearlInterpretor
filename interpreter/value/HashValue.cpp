@@ -14,3 +14,7 @@ HashValue::~HashValue() {
 std::map<std::string,Value*> HashValue::value() {
     return hash_value;
 }
+
+void HashValue::setMap(std::map<std::string,Value*> m){
+    hash_value=m;
+}

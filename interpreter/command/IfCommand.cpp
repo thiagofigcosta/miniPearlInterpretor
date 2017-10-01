@@ -2,11 +2,11 @@
 
 #include <cassert>
 
-IfCommand::IfCommand(IfHead* cond, Command* then, int line) 
-    : Command(line),cond_(cond),then_(then){
+IfCommand::IfCommand(IfHead* cond, Command* then, int line)
+    : Command(line),cond_(cond),then_(then),else_(nullptr){
 }
 
-IfCommand::IfCommand(IfHead* cond, Command* then, Command* elsecmd,int line) 
+IfCommand::IfCommand(IfHead* cond, Command* then, Command* elsecmd,int line)
     : Command(line),cond_(cond),then_(then),else_(elsecmd) {
 }
 

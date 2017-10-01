@@ -12,6 +12,7 @@ public:
     explicit HashValue(std::map<std::string,Value*> m,int line);
     virtual ~HashValue();
 
+    void setMap(std::map<std::string,Value*> m);
     virtual std::map<std::string,Value*> value();
 
 private:

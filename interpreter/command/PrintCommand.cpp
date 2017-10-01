@@ -3,6 +3,7 @@
 
 #include "PrintCommand.hpp"
 #include "../expr/Expr.hpp"
+#include "../value/Value.hpp"
 #include "../value/IntegerValue.hpp"
 #include "../value/StringValue.hpp"
 #include "../value/HashValue.hpp"
@@ -48,7 +49,7 @@ void PrintCommand::execute() {
                 for(Value* v:lv->value()){
                     if(v->type()==Value::Integer){
                         iv=(IntegerValue*)v;
-                        out+=std::to_string(iv->value())+",";
+                        out+=Value::to_string(iv->value())+",";
                     }else{
                         sv=(StringValue*)v;
                         out+=sv->value()+",";
@@ -64,7 +65,7 @@ void PrintCommand::execute() {
                     Value* v=vf.second;
                     if(v->type()==Value::Integer){
                         iv=(IntegerValue*)v;
-                        out+=s+"=>"+std::to_string(iv->value())+",";
+                        out+=s+"=>"+Value::to_string(iv->value())+",";
                     }else{
                         sv=(StringValue*)v;
                         out+=s+"=>"+sv->value()+",";
@@ -73,7 +74,7 @@ void PrintCommand::execute() {
                 out.pop_back();
                 std::cout<<out;
                 break;
-            default:SyntacticalAnalysis::showError("Invalid operation on print cmd",line_);break;
+            default:SyntacticalAnalysis::showError("Invalid operation("+Value::to_string(value->type())+") on print cmd",line_);break;
         }
     }
     if (newLine_)

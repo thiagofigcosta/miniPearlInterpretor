@@ -14,38 +14,27 @@ ListIndexExpr::~ListIndexExpr() {
     	delete index_;
 }
 void ListIndexExpr::setValue(Value* value) {
+    std::vector<Value*> vecVal;
 	if(value->type()!=Value::Integer&&value->type()!=Value::String){
 		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
 	}
 	Value* basev=(Value*)base_->expr();
 	Value* idexv=(Value*)index_->expr();
 	if(basev->type()!=Value::List||idexv->type()!=Value::Integer){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid vec on set list var at idx",line_);
 	}
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();
-	if(value->type()==Value::String){
-		StringValue* sattr=(StringValue*)value;
-		Value* tmpV=lv->value()[iv->value()];
-		if(tmpV->type()==Value::String){
-			StringValue* tmpVS=(StringValue*)tmpV;
-			tmpVS->setValue(sattr->value());
-		}
-	}else if(value->type()==Value::Integer){
-		IntegerValue* iattr=(IntegerValue*)value;
-		Value* tmpV=lv->value()[iv->value()];
-		if(tmpV->type()==Value::Integer){
-			IntegerValue* tmpVI=(IntegerValue*)tmpV;
-			tmpVI->setValue(iattr->value());
-		}
-	}
+    vecVal=lv->value();
+    vecVal[iv->value()]=value;
+    lv->setVec(vecVal);
 }
 
 Value* ListIndexExpr::expr() {
 	Value* basev=(Value*)base_->expr();
 	Value* idexv=(Value*)index_->expr();
 	if(basev->type()!=Value::List||idexv->type()!=Value::Integer){
-		SyntacticalAnalysis::showError("Invalid type on set list var at idx",line_);
+		SyntacticalAnalysis::showError("Invalid vec on get list var at idx",line_);
 	}
 	ListValue* lv=(ListValue*)base_->expr();
 	IntegerValue* iv=(IntegerValue*)index_->expr();

@@ -15,7 +15,6 @@ std::vector<Value*> ListValue::value() {
     return list_value;
 }
 
-ListValue* ListValue::clone(const ListValue* orig){
-    ListValue* temp = new ListValue(orig->list_value,orig->line_);
-    return temp;
+void ListValue::setVec(std::vector<Value*> l){
+	list_value=l;
 }

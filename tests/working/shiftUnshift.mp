@@ -1,0 +1,10 @@
+@l=[1,2,3];
+println @l;
+$x=shift @l;
+println $x;
+println @l;
+unshift @l,0;
+println @l;
+$x=shift @l;
+unshift @l,@l;
+println @l;

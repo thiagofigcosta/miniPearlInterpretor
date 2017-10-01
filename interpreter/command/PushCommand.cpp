@@ -20,16 +20,22 @@ PushCommand::~PushCommand() {
 void PushCommand::execute() {
     if (list_&&values_) {
         ListValue* l =(ListValue*)list_->expr();
+        std::vector<Value*> valVec=l->value();
         Value* value=values_->expr();
         if(value->type()==Value::String){
             StringValue* sv=(StringValue*)value;
-            l->value().push_back(sv);
+            valVec.push_back(sv);
         }else if(value->type()==Value::Integer){
             IntegerValue* iv=(IntegerValue*)value;
-            l->value().push_back(iv);
+            valVec.push_back(iv);
+        }else if(value->type()==Value::List){
+            ListValue* lv=(ListValue*)value;
+            std::vector<Value*> lvv=lv->value();
+            valVec.insert(valVec.end(),lvv.begin(),lvv.end());
         }else{
             SyntacticalAnalysis::showError("Invalid type on push cmd",line_);
         }
+        l->setVec(valVec);
     }else{
         SyntacticalAnalysis::showError("Invalid operation on push cmd",line_);
     }

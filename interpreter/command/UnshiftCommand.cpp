@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <cassert>
 
 #include "UnshiftCommand.hpp"
@@ -18,16 +19,22 @@ UnshiftCommand::~UnshiftCommand() {
 void UnshiftCommand::execute() {
     if (list_&&values_) {
         ListValue* l=(ListValue*)list_->expr();
+        std::vector<Value*> valVec=l->value();
         Value* value=values_->expr();
         if(value->type()==Value::String){
             StringValue* sv=(StringValue*) value;
-            l->value().insert(l->value().begin(),sv);
+            valVec.insert(valVec.begin(),sv);
         }else if(value->type()==Value::Integer){
             IntegerValue* iv=(IntegerValue*) value;
-            l->value().insert(l->value().begin(),iv);
+            valVec.insert(valVec.begin(),iv);
+        }else if(value->type()==Value::List){
+            ListValue* lv=(ListValue*)value;
+            std::vector<Value*> lvv=lv->value();
+            valVec.insert(valVec.begin(),lvv.begin(),lvv.end());
         }else{
             SyntacticalAnalysis::showError("Invalid type on unshift cmd",line_);
         }
+        l->setVec(valVec);
     }else{
         SyntacticalAnalysis::showError("Invalid operation on unshift cmd",line_);
     }

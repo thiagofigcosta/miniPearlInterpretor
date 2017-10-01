@@ -39,7 +39,7 @@ SyntacticalAnalysis::SyntacticalAnalysis(LexicalAnalysis& lex):lex(lex), current
 SyntacticalAnalysis::~SyntacticalAnalysis() {
 }
 void SyntacticalAnalysis::start(){
-    program=procStatements(); 
+    program=procStatements();
     matchToken(TOKEN_END_OF_FILE);
 }
 void SyntacticalAnalysis::execute(){
@@ -64,7 +64,7 @@ void SyntacticalAnalysis::showError() {
 }
 void SyntacticalAnalysis::showError(TokenType token) {
     std::string err;
-    err="Unkown token("+std::to_string(token)+")";
+    err="Unkown token("+Value::to_string(token)+")";
     for(auto &i:lex.getSymbolMap()){
         if(i.second==token){
             err="\'"+i.first+"\'";
@@ -98,7 +98,7 @@ void SyntacticalAnalysis::showError(std::string err, TokenType t,int line) {
 
 void SyntacticalAnalysis::showError(std::string err,int line) {
     if(err=="") err="Something";
-    printf("Syntactical Error - Expected %s at:%d\n",err.c_str(),line); 
+    printf("Syntactical Error - Expected %s at:%d\n",err.c_str(),line);
     exit(1);
 }
 
@@ -111,16 +111,16 @@ void SyntacticalAnalysis::showError(std::string err,int line) {
 // <statements> ::= <cmd> { <cmd> }
 Command* SyntacticalAnalysis::procStatements() {
     CommandsBlock* cmds=new CommandsBlock();
-    while (testToken(TOKEN_SVAR)|| 
-           testToken(TOKEN_LVAR)|| 
-           testToken(TOKEN_HVAR)|| 
-           testToken(TOKEN_PRINT)|| 
-           testToken(TOKEN_PRINTLN)|| 
-           testToken(TOKEN_PUSH)|| 
-           testToken(TOKEN_UNSHIFT)|| 
-           testToken(TOKEN_IF)|| 
-           testToken(TOKEN_WHILE)|| 
-           testToken(TOKEN_DO)|| 
+    while (testToken(TOKEN_SVAR)||
+           testToken(TOKEN_LVAR)||
+           testToken(TOKEN_HVAR)||
+           testToken(TOKEN_PRINT)||
+           testToken(TOKEN_PRINTLN)||
+           testToken(TOKEN_PUSH)||
+           testToken(TOKEN_UNSHIFT)||
+           testToken(TOKEN_IF)||
+           testToken(TOKEN_WHILE)||
+           testToken(TOKEN_DO)||
            testToken(TOKEN_FOREACH)){
         cmds->addCommand(procCmd());
     }
@@ -161,7 +161,7 @@ Command* SyntacticalAnalysis::procCmd() {
     return c;
 }
 
-//<assign> ::= <var> '=' <rhs> [ <post> ] ';' 
+//<assign> ::= <var> '=' <rhs> [ <post> ] ';'
 Command* SyntacticalAnalysis::procAssign(){
     Command* ac=nullptr;
     Expr* var=procVar();
@@ -200,7 +200,7 @@ Command* SyntacticalAnalysis::procAction() {
             testToken(TOKEN_POP)||
             testToken(TOKEN_SHIFT)||
             testToken(TOKEN_OPENTHEPAR)){
-            expr = procRHS();
+            expr=procRHS();
         }
         ac=new PrintCommand(expr, false, line);
     } else if (testToken(TOKEN_PRINTLN)) {
@@ -223,7 +223,7 @@ Command* SyntacticalAnalysis::procAction() {
             testToken(TOKEN_POP)||
             testToken(TOKEN_SHIFT)||
             testToken(TOKEN_OPENTHEPAR)){
-            expr = procRHS();
+            expr=procRHS();
         }
         ac=new PrintCommand(expr, true, line);
     } else if (testToken(TOKEN_PUSH)) {
@@ -254,7 +254,7 @@ IfCommand* SyntacticalAnalysis::procIf(){
     int line=lex.line();
     IfHead* cond=procIfHead();
     Command* then=nullptr;
-    Command* elsi=nullptr; 
+    Command* elsi=nullptr;
     if(testToken(TOKEN_OPENTHECUR)){
         matchToken(TOKEN_OPENTHECUR);
         then=procStatements();
@@ -274,7 +274,7 @@ IfCommand* SyntacticalAnalysis::procIf(){
     }
     if(elsi==nullptr)
         return new IfCommand(cond,then,line);
-    else 
+    else
         return new IfCommand(cond,then,elsi,line);
 }
 
@@ -504,12 +504,6 @@ Expr* SyntacticalAnalysis::procTerm(){
 Expr* SyntacticalAnalysis::procFactor(){
     Expr* e=nullptr;
     switch (current.type) {
-        case TOKEN_NUMBER:
-            e=procNumber();
-            break;
-        case TOKEN_STRING:
-            e=procString();
-            break;
         case TOKEN_INPUT:
         case TOKEN_SIZE:
         case TOKEN_SORT:
@@ -517,13 +511,21 @@ Expr* SyntacticalAnalysis::procFactor(){
         case TOKEN_KEYS:
         case TOKEN_VALUES:
         case TOKEN_EMPTY:
+        case TOKEN_POP:
+        case TOKEN_SHIFT:
             e=procFunction();
+            break;
+        case TOKEN_NUMBER:
+            e=procNumber();
+            break;
+        case TOKEN_STRING:
+            e=procString();
             break;
         case TOKEN_SVAR:
         case TOKEN_LVAR:
         case TOKEN_HVAR:
             e=procVar();
-            break;    
+            break;
         case TOKEN_OPENTHEBRA:
             e=procList();
             break;
@@ -545,11 +547,15 @@ Expr* SyntacticalAnalysis::procFactor(){
 //<function> ::= (input | size | sort | reverse | keys | values | empty) <rhs>
 Expr* SyntacticalAnalysis::procFunction(){
     FunctionExpr::FunctionType op;
+    Expr* e=nullptr;
     switch (current.type) {
         case TOKEN_INPUT:
             op=FunctionExpr::Input;break;
         case TOKEN_SIZE:
-            op=FunctionExpr::Size;break;
+            consumeToken();
+            op=FunctionExpr::Size;
+            e=procFactor();
+            return new FunctionExpr(op,e,lex.line());
         case TOKEN_SORT:
             op=FunctionExpr::Sort;break;
         case TOKEN_REVERSE:
@@ -560,12 +566,16 @@ Expr* SyntacticalAnalysis::procFunction(){
             op=FunctionExpr::Values;break;
         case TOKEN_EMPTY:
             op=FunctionExpr::Empty;break;
+        case TOKEN_SHIFT:
+            op=FunctionExpr::Shift;break;
+        case TOKEN_POP:
+            op=FunctionExpr::Pop;break;
         default:
             showError("function");
             break;
     }
     consumeToken();
-    Expr* e=procRHS();
+    e=procRHS();
     return new FunctionExpr(op,e,lex.line());
 }
 
@@ -618,7 +628,7 @@ Expr* SyntacticalAnalysis::procVar(){
 Expr* SyntacticalAnalysis::procList(){
     std::vector<Value*> e;
     matchToken(TOKEN_OPENTHEBRA);
-    if(!testToken(TOKEN_CLOSETHEBRA)){ 
+    if(!testToken(TOKEN_CLOSETHEBRA)){
         e.push_back(procRHS()->expr());
         do{
             if(testToken(TOKEN_COMMA)){
@@ -637,7 +647,7 @@ Expr* SyntacticalAnalysis::procList(){
 Expr* SyntacticalAnalysis::procHash(){
     std::map<std::string,Value*> e;
     matchToken(TOKEN_OPENTHECUR);
-    if(!testToken(TOKEN_CLOSETHECUR)){ 
+    if(!testToken(TOKEN_CLOSETHECUR)){
         StringValue* sv=(StringValue*)procRHS()->expr();
         std::string s=sv->value();
         matchToken(TOKEN_BIND);
