@@ -8,5 +8,5 @@ StringValue::~StringValue() {
 }
 
 std::string StringValue::value() {
-    return str_value;
+	return str_value;
 }
